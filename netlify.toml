@@ -1,0 +1,30 @@
+# Netlify configuration for a static site in /public
+[build]
+  publish = "public"
+  command = ""
+
+# Force pretty URLs: /about -> /about.html, etc.
+[[redirects]]
+  from = "/about"
+  to = "/about.html"
+  status = 200
+
+[[redirects]]
+  from = "/skills"
+  to = "/skills.html"
+  status = 200
+
+[[redirects]]
+  from = "/projects"
+  to = "/projects.html"
+  status = 200
+
+[[redirects]]
+  from = "/blogs"
+  to = "/blogs.html"
+  status = 200
+
+[[redirects]]
+  from = "/contact"
+  to = "/contact.html"
+  status = 200

@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Blog - Debnil Pal</title>
+  <meta name="description" content="Tech insights, tutorials, and thoughts by Debnil Pal">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/blog.css">
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+</head>
+<body>
+  
+  <nav class="navbar" id="navbar">
+    <div class="nav-container">
+      
+      <div class="nav-menu" id="nav-menu">
+        <a href="/" class="nav-link">Home</a>
+        <a href="/about" class="nav-link">About</a>
+        <a href="/skills" class="nav-link">Skills</a>
+        <a href="/projects" class="nav-link">Projects</a>
+        <a href="/blogs" class="nav-link active">Blogs</a>
+        <a href="/contact" class="nav-link">Contact</a>
+      </div>
+      <div class="nav-controls">
+        <button class="theme-toggle" id="theme-toggle"><i class="fas fa-moon"></i></button>
+        <button class="nav-toggle" id="nav-toggle"><span></span><span></span><span></span></button>
+      </div>
+    </div>
+  </nav>
+
+  <section class="blog-hero">
+    <div class="container">
+      <div class="blog-hero-content">
+        <h1 class="blog-hero-title">Tech Insights & Thoughts</h1>
+        <p class="blog-hero-subtitle">Exploring AI/ML, Cybersecurity, and modern development</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="blog-filters">
+    <div class="container">
+      <div class="filter-container">
+        <div class="filter-buttons">
+          <button class="filter-btn active" data-filter="all">All Posts</button>
+          <button class="filter-btn" data-filter="web-development">Web Development</button>
+          <button class="filter-btn" data-filter="javascript">JavaScript</button>
+          <button class="filter-btn" data-filter="react">React</button>
+          <button class="filter-btn" data-filter="nodejs">Node.js</button>
+          <button class="filter-btn" data-filter="ui-ux">UI/UX</button>
+        </div>
+        <div class="search-container">
+          <input type="text" id="blog-search" placeholder="Search articles...">
+          <i class="fas fa-search"></i>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="featured-post">
+    <div class="container">
+      <h2 class="section-title">Top Article</h2>
+      <article class="featured-article">
+        <div class="featured-image">
+          <img src="assets/featured-blog.svg" alt="Article Image">
+        </div>
+        <div class="featured-content">
+          <div class="blog-icon"><i class="fas fa-globe"></i></div>
+          <div class="article-meta"><span class="article-date"><i class="fas fa-calendar"></i> December 20, 2024</span><span class="article-category">Web Development</span><span class="article-reading-time"><i class="fas fa-clock"></i> 8 min read</span></div>
+          <h3>The Future of Web Development: Trends to Watch in 2025</h3>
+          <p>As we step into 2025, from AI-powered tools to new frameworks—let's explore the trends shaping web development.</p>
+          <div class="article-tags"><span class="tag">Web Development</span><span class="tag">Future Tech</span><span class="tag">AI</span></div>
+          <a href="#" class="read-more-btn">Read Full Article <i class="fas fa-arrow-right"></i></a>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <section class="blog-grid-section">
+    <div class="container">
+      <div class="blog-grid" id="blog-grid"></div>
+      <div class="load-more-container"><button class="btn btn-primary" id="load-more-btn"><i class="fas fa-plus"></i> Load More Articles</button></div>
+    </div>
+  </section>
+
+  <section class="newsletter-signup">
+    <div class="container">
+      <div class="newsletter-content">
+        <div class="newsletter-text"><h3>Stay Updated</h3><p>Get the latest articles delivered to your inbox</p></div>
+        <form class="newsletter-form" id="newsletter-form"><input type="email" placeholder="Enter your email" required><button type="submit" class="btn btn-primary"><i class="fas fa-paper-plane"></i> Subscribe</button></form>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-section"><h3>Debnil Pal</h3><p>AI/ML, DL, and Cybersecurity enthusiast.</p></div>
+        <div class="footer-section"><h4>Quick Links</h4><ul><li><a href="/">Home</a></li><li><a href="/about">About</a></li><li><a href="/projects">Projects</a></li><li><a href="/blogs">Blogs</a></li></ul></div>
+        <div class="footer-section"><h4>Services</h4><ul><li><a href="#">AI/ML Solutions</a></li><li><a href="#">Model Deployment</a></li><li><a href="#">Security Consulting</a></li><li><a href="#">Mentoring</a></li></ul></div>
+        <div class="footer-section"><h4>Connect</h4><div class="footer-social"><a href="https://www.linkedin.com/in/debnil-pal-960502285" target="_blank" title="Debnil linkedin"><i class="fab fa-linkedin"></i></a><a href="https://github.com/DEBNILPAL" target="_blank" title="GitHub: DEBNILPAL"><i class="fab fa-github"></i></a><a href="https://www.facebook.com/profile.php?id=100091180033224" target="_blank" title="Facebook"><i class="fab fa-facebook"></i></a></div></div>
+      </div>
+      <div class="footer-bottom"><p>&copy; 2025 Debnil Pal. All rights reserved.</p></div>
+    </div>
+  </footer>
+
+  <script src="js/space.js"></script>
+  <script src="js/main.js"></script>
+  <script src="js/blog.js"></script>
+  <script src="js/theme.js"></script>
+</body>
+</html>

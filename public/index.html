@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Debnil Pal - Portfolio</title>
+  <meta name="description" content="AI/ML, Deep Learning, Cybersecurity, and Competitive Programming Portfolio of Debnil Pal">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/animations.css">
+  <link rel="stylesheet" href="css/responsive.css">
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+</head>
+<body>
+  
+  <nav class="navbar" id="navbar">
+    <div class="nav-container">
+      
+      <div class="nav-menu" id="nav-menu">
+        <a href="#home" class="nav-link active">Home</a>
+        <a href="/about" class="nav-link">About</a>
+        <a href="/skills" class="nav-link">Skills</a>
+        <a href="/projects" class="nav-link">Projects</a>
+        <a href="/blogs" class="nav-link">Blogs</a>
+        <a href="/contact" class="nav-link">Contact</a>
+      </div>
+      <div class="nav-controls">
+        <button class="theme-toggle" id="theme-toggle"><i class="fas fa-moon"></i></button>
+        <button class="nav-toggle" id="nav-toggle"><span></span><span></span><span></span></button>
+      </div>
+    </div>
+  </nav>
+
+  <div id="home-root">
+  <section id="home" class="hero">
+    <div class="hero-background"><div class="stars"></div><div class="floating-elements"><div class="floating-element"></div><div class="floating-element"></div><div class="floating-element"></div></div></div>
+    <div class="hero-content">
+      <div class="hero-text">
+        <h1 class="hero-title"><span class="greeting">Hello, I'm</span><span class="name">Debnil Pal</span></h1>
+        <div class="hero-subtitle"><span class="typing-text" id="typing-text"></span><span class="cursor">|</span></div>
+        <p class="hero-description">AI/ML and Cybersecurity enthusiast building intelligent, secure systems. I love blending Deep Learning with domains like security, space science, and real-time systems—and I also enjoy Competitive Programming to sharpen my problem-solving.</p>
+        <div class="hero-buttons">
+          <a href="#projects" class="btn btn-primary"><i class="fas fa-rocket"></i>View My Work</a>
+          <a href="#contact" class="btn btn-secondary"><i class="fas fa-envelope"></i>Get In Touch</a>
+        </div>
+      </div>
+      <div class="hero-visual">
+        <div class="profile-container">
+          <div class="profile-image">
+            <img src="assets/debnil.jpg" alt="Debnil Pal" id="profile-img">
+            <div class="profile-glow"></div>
+            <div class="profile-frame-orbit"></div>
+            <div class="tech-orbit"><div class="tech-icon" style="--i:0"><i class="fab fa-react"></i></div><div class="tech-icon" style="--i:1"><i class="fab fa-js-square"></i></div><div class="tech-icon" style="--i:2"><i class="fab fa-python"></i></div><div class="tech-icon" style="--i:3"><i class="fab fa-node-js"></i></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="overview" class="overview">
+    <div class="container">
+      <div class="section-header"><h2 class="section-title">Quick Overview</h2><p class="section-subtitle">Who I am, what I do, and what I’m great at</p></div>
+      <div class="overview-grid">
+        <div class="overview-card">
+          <h3>Who I Am</h3>
+          <p>I'm Debnil, an AI/ML and Cybersecurity enthusiast focused on building reliable, performant systems. I love shipping practical solutions that blend ML with security and real-time constraints.</p>
+        </div>
+        <div class="overview-card">
+          <h3>Core Skills</h3>
+          <ul class="pill-list">
+            <li>PyTorch</li>
+            <li>Scikit-learn</li>
+            <li>Computer Vision</li>
+            <li>MLOps (Docker)</li>
+            <li>FastAPI</li>
+            <li>Security</li>
+          </ul>
+        </div>
+        <div class="overview-card">
+          <h3>What I Do</h3>
+          <ul class="check-list">
+            <li>AI/ML Solutions & Model Deployment</li>
+            <li>Security Consulting & Anomaly Detection</li>
+            <li>Performance-focused Engineering</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="skills" class="skills">
+    <div class="container">
+      <div class="section-header"><h2 class="section-title">Skills & Expertise</h2><p class="section-subtitle">AI-first skillset spanning ML/DL, Security, and Algorithms</p></div>
+      <div class="skills-content">
+        <div class="skills-categories">
+          <div class="skill-category active" data-category="ai-ml"><i class="fas fa-brain"></i><span>AI/ML</span></div>
+          <div class="skill-category" data-category="deep-learning"><i class="fas fa-network-wired"></i><span>Deep Learning</span></div>
+          <div class="skill-category" data-category="cybersecurity"><i class="fas fa-shield-alt"></i><span>Cybersecurity</span></div>
+          <div class="skill-category" data-category="competitive-programming"><i class="fas fa-chess-knight"></i><span>Competitive Programming</span></div>
+        </div>
+        <div class="skills-grid" id="skills-grid"></div>
+      </div>
+      <div class="certificates-section">
+        <h3>Certifications</h3>
+        <div class="certificates-grid">
+          <div class="certificate-item"><div class="certificate-icon"><i class="fas fa-certificate"></i></div><div class="certificate-info"><h4>Machine Learning Specialization</h4><p>Supervised/Unsupervised ML, Model Evaluation</p></div></div>
+          <div class="certificate-item"><div class="certificate-icon"><i class="fas fa-award"></i></div><div class="certificate-info"><h4>Deep Learning</h4><p>Neural Networks, CNNs, RNNs, Transformers</p></div></div>
+          <div class="certificate-item"><div class="certificate-icon"><i class="fas fa-medal"></i></div><div class="certificate-info"><h4>Cybersecurity Fundamentals</h4><p>Network Security, Cryptography, Threat Modeling</p></div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="projects" class="projects">
+    <div class="container">
+      <div class="section-header"><h2 class="section-title">Featured Projects</h2><p class="section-subtitle">Some of my recent work</p></div>
+      <div class="projects-filter"><button class="filter-btn active" data-filter="all">All</button><button class="filter-btn" data-filter="ai-ml">AI/ML</button><button class="filter-btn" data-filter="cybersecurity">Cybersecurity</button><button class="filter-btn" data-filter="competitive-programming">Competitive Programming</button></div>
+      <div class="projects-grid">
+        <div class="project-card" data-category="ai-ml"><div class="project-image"><img src="assets/project1.svg" alt="Satellite Image Classifier"><div class="project-overlay"><div class="project-links"><a href="#" class="project-link"><i class="fas fa-external-link-alt"></i></a><a href="#" class="project-link"><i class="fab fa-github"></i></a></div></div></div><div class="project-info"><h3>Satellite Image Classifier</h3><p>Deep Learning pipeline for multi-class satellite imagery (ResNet/Transformers)</p><div class="project-tech"><span>PyTorch</span><span>Python</span><span>TensorBoard</span></div></div></div>
+        <div class="project-card" data-category="cybersecurity"><div class="project-image"><img src="assets/project2.svg" alt="ML-based Intrusion Detection"><div class="project-overlay"><div class="project-links"><a href="#" class="project-link"><i class="fas fa-external-link-alt"></i></a><a href="#" class="project-link"><i class="fab fa-github"></i></a></div></div></div><div class="project-info"><h3>ML-based Intrusion Detection</h3><p>Network anomaly detection using tree ensembles and deep autoencoders</p><div class="project-tech"><span>Scikit-learn</span><span>PyTorch</span><span>FastAPI</span></div></div></div>
+        <div class="project-card" data-category="competitive-programming"><div class="project-image"><img src="assets/project3.svg" alt="Algorithmic Problem Solver"><div class="project-overlay"><div class="project-links"><a href="#" class="project-link"><i class="fas fa-external-link-alt"></i></a><a href="#" class="project-link"><i class="fab fa-github"></i></a></div></div></div><div class="project-info"><h3>Algorithmic Problem Solver</h3><p>CP toolkit and visualizer for graphs, DP, number theory</p><div class="project-tech"><span>C++</span><span>Graphs</span><span>Dynamic Programming</span></div></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="blog-preview" class="blog-preview">
+    <div class="container">
+      <div class="section-header"><h2 class="section-title">Latest Blog Posts</h2><p class="section-subtitle">Thoughts and insights on technology</p></div>
+      <div class="blog-grid">
+        <article class="blog-card"><div class="blog-image"><img src="assets/blog1.svg" alt="Blog Post"></div><div class="blog-content"><div class="blog-meta"><span class="blog-date">Dec 20, 2024</span><span class="blog-category">Web Development</span></div><h3>The Future of Web Development</h3><p>Exploring emerging trends and technologies shaping the future of web development...</p><a href="blogs.html" class="read-more">Read More <i class="fas fa-arrow-right"></i></a></div></article>
+        <article class="blog-card"><div class="blog-image"><img src="assets/blog2.svg" alt="Blog Post"></div><div class="blog-content"><div class="blog-meta"><span class="blog-date">Dec 15, 2024</span><span class="blog-category">JavaScript</span></div><h3>Modern JavaScript Best Practices</h3><p>Essential practices every JavaScript developer should follow in 2024...</p><a href="blogs.html" class="read-more">Read More <i class="fas fa-arrow-right"></i></a></div></article>
+        <article class="blog-card"><div class="blog-image"><img src="assets/blog3.svg" alt="Blog Post"></div><div class="blog-content"><div class="blog-meta"><span class="blog-date">Dec 10, 2024</span><span class="blog-category">UI/UX</span></div><h3>Creating Intuitive User Interfaces</h3><p>Design principles for building user-friendly and accessible interfaces...</p><a href="blogs.html" class="read-more">Read More <i class="fas fa-arrow-right"></i></a></div></article>
+      </div>
+      <div class="blog-cta"><a href="blogs.html" class="btn btn-primary">View All Posts</a></div>
+    </div>
+  </section>
+
+  <section id="contact" class="contact">
+    <div class="container">
+      <div class="section-header"><h2 class="section-title">Get In Touch</h2><p class="section-subtitle">Let's discuss your next project</p></div>
+      <div class="contact-content">
+        <div class="contact-info">
+          <div class="contact-item"><div class="contact-icon"><i class="fas fa-envelope"></i></div><div class="contact-details"><h4>Email</h4><p><a href="mailto:debnil.pal.04@gmail.com">debnil.pal.04@gmail.com</a></p></div></div>
+          <div class="contact-item"><div class="contact-icon"><i class="fas fa-phone"></i></div><div class="contact-details"><h4>Phone</h4><p>+91 XXXXX XXXXX</p></div></div>
+          <div class="contact-item"><div class="contact-icon"><i class="fas fa-map-marker-alt"></i></div><div class="contact-details"><h4>Location</h4><p>India, West Bengal, Kolkata</p></div></div>
+          <div class="social-links">
+            <a href="https://www.linkedin.com/in/debnil-pal-960502285" target="_blank" class="social-link" title="Debnil linkedin" aria-label="Debnil linkedin"><i class="fab fa-linkedin"></i></a>
+            <a href="https://github.com/DEBNILPAL" target="_blank" class="social-link" title="GitHub: DEBNILPAL" aria-label="GitHub: DEBNILPAL"><i class="fab fa-github"></i></a>
+            <a href="https://www.facebook.com/profile.php?id=100091180033224" target="_blank" class="social-link" title="Facebook" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
+          </div>
+          <ul class="contact-links" style="margin-top: .5rem; list-style:none; padding:0;">
+            <li><a href="https://www.linkedin.com/in/debnil-pal-960502285" target="_blank">Debnil linkedin</a></li>
+            <li><a href="https://github.com/DEBNILPAL" target="_blank">GitHub: DEBNILPAL</a></li>
+            <li><a href="https://www.facebook.com/profile.php?id=100091180033224" target="_blank">Facebook</a></li>
+          </ul>
+        </div>
+        <form class="contact-form" id="contact-form"><div class="form-group"><input type="text" name="name" placeholder="Your Name" required></div><div class="form-group"><input type="email" name="email" placeholder="Your Email" required></div><div class="form-group"><input type="text" name="subject" placeholder="Subject" required></div><div class="form-group"><textarea name="message" placeholder="Your Message" rows="5" required></textarea></div><button type="submit" class="btn btn-primary"><i class="fas fa-paper-plane"></i>Send Message</button></form>
+      </div>
+      <div class="recommendations-cta"><div class="recommendations-card"><h3>Share Your Thoughts</h3><p>Have recommendations or want to discuss interesting topics? Join the conversation!</p><a href="recommendations.html" class="btn btn-secondary"><i class="fas fa-comments"></i>Join Discussion</a></div></div>
+    </div>
+  </section>
+
+  </div>
+
+  <div id="spa-root" style="display:none"></div>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-section"><h3>Debnil Pal</h3><p>AI/ML, DL, and Cybersecurity enthusiast.</p></div>
+        <div class="footer-section"><h4>Quick Links</h4><ul><li><a href="/">Home</a></li><li><a href="/about">About</a></li><li><a href="/projects">Projects</a></li><li><a href="/blogs">Blogs</a></li></ul></div>
+        <div class="footer-section"><h4>Services</h4><ul><li><a href="#">AI/ML Solutions</a></li><li><a href="#">Model Deployment</a></li><li><a href="#">Security Consulting</a></li><li><a href="#">Mentoring</a></li></ul></div>
+        <div class="footer-section"><h4>Connect</h4><div class="footer-social"><a href="https://www.linkedin.com/in/debnil-pal-960502285" target="_blank" title="Debnil linkedin"><i class="fab fa-linkedin"></i></a><a href="https://github.com/DEBNILPAL" target="_blank" title="GitHub: DEBNILPAL"><i class="fab fa-github"></i></a><a href="https://www.facebook.com/profile.php?id=100091180033224" target="_blank" title="Facebook"><i class="fab fa-facebook"></i></a></div></div>
+      </div>
+      <div class="footer-bottom"><p>&copy; 2025 Debnil Pal. All rights reserved.</p></div>
+    </div>
+  </footer>
+
+  <script src="js/space.js"></script>
+  <script src="js/main.js"></script>
+  <script src="js/animations.js"></script>
+  <script src="js/theme.js"></script>
+</body>
+</html>

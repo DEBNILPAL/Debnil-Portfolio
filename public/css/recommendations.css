@@ -1,0 +1,14 @@
+/* minimal recommendations styles */
+.recommendations-hero{padding:120px 0 60px;background:linear-gradient(135deg,#f093fb,#f5576c);color:#fff;text-align:center}
+.categories-grid,.discussions-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px}
+.form-container{max-width:900px;margin:0 auto;background:var(--surface);padding:16px;border-radius:12px}
+.form-group{display:flex;flex-direction:column;margin-bottom:10px}
+.form-group input,.form-group select,.form-group textarea{padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,.15);background:transparent;color:inherit}
+.form-actions{display:flex;gap:8px;justify-content:center}
+.discussion-card{background:var(--surface);padding:12px;border-radius:12px;border-left:4px solid #667eea}
+.discussion-header{display:flex;justify-content:space-between;align-items:flex-start}
+.discussion-meta{display:flex;gap:10px;opacity:.8;font-size:.9rem}
+.btn{display:inline-flex;gap:8px;align-items:center;padding:8px 12px;border-radius:10px;border:1px solid rgba(255,255,255,.15);color:inherit;text-decoration:none}
+.btn-primary{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff}
+.btn-secondary{background:transparent;border-color:#667eea;color:#667eea}
+@media(max-width:900px){.form-row{display:block}.form-actions{flex-direction:column}}

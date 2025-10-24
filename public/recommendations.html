@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Recommendations & Discussions - Debnil Pal</title>
+  <meta name="description" content="Share your thoughts and join discussions on technology topics">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/recommendations.css">
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+</head>
+<body>
+  <div class="back-bar"><a href="/" class="back-link"><i class="fas fa-arrow-left"></i> Back</a></div>
+  <nav class="navbar" id="navbar">
+    <div class="nav-container">
+      
+      <div class="nav-menu" id="nav-menu">
+        <a href="index.html" class="nav-link">Home</a>
+        <a href="index.html#about" class="nav-link">About</a>
+        <a href="index.html#skills" class="nav-link">Skills</a>
+        <a href="index.html#projects" class="nav-link">Projects</a>
+        <a href="blogs.html" class="nav-link">Blogs</a>
+        <a href="recommendations.html" class="nav-link active">Discussions</a>
+      </div>
+      <div class="nav-controls">
+        <button class="theme-toggle" id="theme-toggle"><i class="fas fa-moon"></i></button>
+        <button class="nav-toggle" id="nav-toggle"><span></span><span></span><span></span></button>
+      </div>
+    </div>
+  </nav>
+
+  <section class="recommendations-hero">
+    <div class="container">
+      <div class="hero-content">
+        <h1 class="hero-title">Join the Discussion</h1>
+        <p class="hero-subtitle">Share your thoughts, recommendations, and insights on technology topics.</p>
+        <div class="hero-stats">
+          <div class="stat-item"><span class="stat-number" data-count="150">0</span><span class="stat-label">Discussions</span></div>
+          <div class="stat-item"><span class="stat-number" data-count="500">0</span><span class="stat-label">Contributors</span></div>
+          <div class="stat-item"><span class="stat-number" data-count="20">0</span><span class="stat-label">Topics</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="recommendation-form-section">
+    <div class="container">
+      <div class="form-container">
+        <div class="form-header"><h2>Share Your Thoughts</h2><p>Start a new discussion or share your recommendations on any tech topic</p></div>
+        <form class="recommendation-form" id="recommendation-form">
+          <div class="form-row">
+            <div class="form-group"><label for="name">Your Name</label><input type="text" id="name" name="name" required></div>
+            <div class="form-group"><label for="email">Email Address</label><input type="email" id="email" name="email" required></div>
+          </div>
+          <div class="form-group"><label for="topic">Discussion Topic</label><select id="topic" name="topic" required>
+            <option value="">Select a topic</option>
+            <option value="web-development">Web Development</option>
+            <option value="artificial-intelligence">Artificial Intelligence</option>
+            <option value="mobile-development">Mobile Development</option>
+            <option value="ui-ux-design">UI/UX Design</option>
+            <option value="career-advice">Career Advice</option>
+            <option value="tech-trends">Tech Trends</option>
+            <option value="other">Other</option>
+          </select></div>
+          <div class="form-group"><label for="title">Discussion Title</label><input type="text" id="title" name="title" placeholder="What would you like to discuss?" required></div>
+          <div class="form-group"><label for="message">Your Thoughts & Recommendations</label><textarea id="message" name="message" rows="6" placeholder="Share your insights, recommendations, or questions about the topic..." required></textarea></div>
+          <div class="form-group"><label for="tags">Tags (optional)</label><input type="text" id="tags" name="tags" placeholder="e.g., react, javascript, frontend"><small>Separate tags with commas</small></div>
+          <div class="form-actions"><button type="submit" class="btn btn-primary"><i class="fas fa-paper-plane"></i> Submit Discussion</button><button type="reset" class="btn btn-secondary"><i class="fas fa-undo"></i> Reset Form</button></div>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <section class="recent-discussions">
+    <div class="container">
+      <div class="section-header"><h2 class="section-title">Recent Discussions</h2><div class="discussion-filters"><button class="filter-btn active" data-filter="all">All</button><button class="filter-btn" data-filter="popular">Popular</button><button class="filter-btn" data-filter="recent">Recent</button><button class="filter-btn" data-filter="unanswered">Unanswered</button></div></div>
+      <div class="discussions-grid" id="discussions-grid"></div>
+      <div class="load-more-container"><button class="btn btn-primary" id="load-more-discussions"><i class="fas fa-plus"></i> Load More Discussions</button></div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-section"><h3>Debnil Pal</h3><p>Building a community of tech enthusiasts and learners.</p></div>
+        <div class="footer-section"><h4>Quick Links</h4><ul><li><a href="index.html">Home</a></li><li><a href="index.html#about">About</a></li><li><a href="index.html#projects">Projects</a></li><li><a href="blogs.html">Blogs</a></li></ul></div>
+        <div class="footer-section"><h4>Connect</h4><div class="footer-social"><a href="https://www.linkedin.com/in/debnil-pal-960502285" target="_blank" title="Debnil linkedin"><i class="fab fa-linkedin"></i></a><a href="https://github.com/DEBNILPAL" target="_blank" title="GitHub: DEBNILPAL"><i class="fab fa-github"></i></a><a href="https://www.facebook.com/profile.php?id=100091180033224" target="_blank" title="Facebook"><i class="fab fa-facebook"></i></a></div><ul class="contact-links" style="margin-top:.5rem;list-style:none;padding:0;"><li><a href="https://www.linkedin.com/in/debnil-pal-960502285" target="_blank">Debnil linkedin</a></li><li><a href="https://github.com/DEBNILPAL" target="_blank">GitHub: DEBNILPAL</a></li><li><a href="https://www.facebook.com/profile.php?id=100091180033224" target="_blank">Facebook</a></li></ul></div>
+      </div>
+      <div class="footer-bottom"><p>&copy; 2024 Debnil Pal. All rights reserved.</p></div>
+    </div>
+  </footer>
+
+  <script src="js/space.js"></script>
+  <script src="js/main.js"></script>
+  <script src="js/recommendations.js"></script>
+  <script src="js/theme.js"></script>
+</body>
+</html>
