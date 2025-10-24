@@ -195,7 +195,7 @@ body.menu-open{overflow:hidden}
 .page-header h1{margin:0 0 8px;font-family:"Space Grotesk",Inter,sans-serif}
 .about-card,.page-card{background:var(--surface);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:16px;margin-bottom:16px}
 .about-grid{display:grid;grid-template-columns:1.2fr .8fr;gap:16px}
-.profile-small{max-width:160px;height:auto;border-radius:50%;display:block;margin-left:auto}
+.profile-small{max-width:160px;height:auto;border-radius:50%;display:block;margin-left:auto;margin-top:30px}
 [data-theme="light"] .about-card{border-color:rgba(0,0,0,.08)}
 
 /* Light mode animated backdrop */
