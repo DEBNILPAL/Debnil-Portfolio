@@ -1,14 +1,10 @@
-// Minimal theme toggler
+// Disable theme switching: force single mode (default variables in :root)
 (function(){
-  const btn = document.getElementById('theme-toggle');
-  const saved = localStorage.getItem('theme') || 'dark';
-  document.documentElement.setAttribute('data-theme', saved);
-  if (btn){
-    btn.addEventListener('click', ()=>{
-      const current = document.documentElement.getAttribute('data-theme') || 'dark';
-      const next = current === 'dark' ? 'light' : 'dark';
-      document.documentElement.setAttribute('data-theme', next);
-      localStorage.setItem('theme', next);
-    });
-  }
+  try{
+    // Ensure we don't apply light theme ever
+    localStorage.removeItem('theme');
+    document.documentElement.removeAttribute('data-theme');
+    const btn = document.getElementById('theme-toggle');
+    if (btn) btn.style.display = 'none';
+  }catch(e){/* no-op */}
 })();
