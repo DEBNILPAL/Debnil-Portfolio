@@ -39,48 +39,52 @@ function initArticleView(){
     if(gridSection) gridSection.style.display=showDetail? 'none':'';
     window.scrollTo({top:0,behavior:'smooth'});
   };
-  function dummyBodyHTML(){
-    return `
-      <p>This is placeholder content for your article. Replace it with your real write-up.</p>
-      <h2>Introduction</h2>
-      <p>Summarize the motivation, goals, and context. Provide links to repos or datasets as needed.</p>
-      <h2>Approach</h2>
-      <p>Outline the methodology, architecture, and tools used. Add diagrams or code snippets.</p>
-      <div class="article-inline-image">
-        <img src="assets/featured-blog.svg" alt="Inline illustration">
-        <span class="caption">Replace with a relevant image or diagram.</span>
-      </div>
-      <h2>Results</h2>
-      <p>Share results, metrics, or demos. Discuss trade-offs and future work.</p>
-      <h2>Conclusion</h2>
-      <p>Wrap up key learnings and direct readers to try the project or read more.</p>
-    `;
-  }
-  function showArticleDetail({title,image,category,date}, {updateUrl}={updateUrl:true}){
+  async function showArticleDetail({slug,title,image,category,date}, {updateUrl}={updateUrl:true}){
     const t=decodeURIComponent(title||'');
     const img=decodeURIComponent(image||'');
     const cat=decodeURIComponent(category||'');
     const dt=decodeURIComponent(date||'');
+    const s=decodeURIComponent(slug||'');
     const titleEl=document.getElementById('article-title');
     const imgEl=document.getElementById('article-image');
     const catEl=document.getElementById('article-category');
     const dateEl=document.getElementById('article-date');
     const bodyEl=document.getElementById('article-body');
+    // Pre-fill basic fields before fetch for fast UI
     if(titleEl) titleEl.textContent=t||'Article Title';
     if(imgEl) imgEl.src=img||'assets/featured-blog.svg';
     if(catEl) catEl.textContent=cat||'Blog';
     if(dateEl) dateEl.innerHTML = `<i class="fas fa-calendar"></i> ${dt? new Date(dt).toLocaleDateString(): ''}`;
-    if(bodyEl) bodyEl.innerHTML=dummyBodyHTML();
+    if(bodyEl) bodyEl.innerHTML='<p>Loading article...</p>';
     setVisible(true);
     if(updateUrl){
       // Persist selection in URL so refresh keeps the article open
       setParams({
         view:'article',
+        slug: encodeURIComponent(s||''),
         title: encodeURIComponent(t),
         image: encodeURIComponent(img||'assets/featured-blog.svg'),
         category: encodeURIComponent(cat||'Blog'),
         date: encodeURIComponent(dt||new Date().toISOString())
       });
+    }
+    // Load full article content if slug available
+    if(s){
+      try{
+        const res = await fetch(`/api/blogs/${s}`);
+        const post = await res.json();
+        if(res.ok && post){
+          if(titleEl) titleEl.textContent = post.title || t;
+          if(imgEl) imgEl.src = post.image || img || 'assets/featured-blog.svg';
+          if(catEl) catEl.textContent = post.category || cat || 'Blog';
+          if(dateEl) dateEl.innerHTML = `<i class=\"fas fa-calendar\"></i> ${post.publishDate? new Date(post.publishDate).toLocaleDateString(): (dt? new Date(dt).toLocaleDateString(): '')}`;
+          if(bodyEl) bodyEl.innerHTML = (post.content||'').replace(/\n/g,'<br>') || '<p>No content available.</p>';
+        }else{
+          if(bodyEl) bodyEl.innerHTML = '<p>Failed to load article.</p>';
+        }
+      }catch(e){ if(bodyEl) bodyEl.innerHTML = '<p>Failed to load article.</p>'; }
+    }else{
+      if(bodyEl) bodyEl.innerHTML = '<p>No article selected.</p>';
     }
   }
   // Delegate clicks inside blog grid
@@ -90,21 +94,29 @@ function initArticleView(){
       const a=e.target.closest('a.read-more');
       if(!a) return;
       e.preventDefault();
-      const data={title:a.dataset.title,image:a.dataset.image,category:a.dataset.category,date:a.dataset.date};
+      const data={slug:a.dataset.slug,title:a.dataset.title,image:a.dataset.image,category:a.dataset.category,date:a.dataset.date};
       showArticleDetail(data);
     });
   }
   // Featured "Read Full Article" button
   const featuredBtn=document.querySelector('.featured-article .read-more-btn');
   if(featuredBtn){
-    featuredBtn.addEventListener('click',(e)=>{
+    featuredBtn.addEventListener('click',async (e)=>{
       e.preventDefault();
-      showArticleDetail({
-        title:encodeURIComponent('Microcredit Risk Modeling with Alternative Data'),
-        image:encodeURIComponent('assets/featured-blog.svg'),
-        category:encodeURIComponent('AI/ML'),
-        date:encodeURIComponent(new Date().toISOString())
-      });
+      try{
+        const res = await fetch('/api/blogs/featured');
+        const post = await res.json();
+        if(!res.ok) throw new Error('Failed');
+        showArticleDetail({
+          slug: encodeURIComponent(post.slug||''),
+          title: encodeURIComponent(post.title||''),
+          image: encodeURIComponent(post.image||'assets/featured-blog.svg'),
+          category: encodeURIComponent(post.category||'Blog'),
+          date: encodeURIComponent(post.publishDate||'')
+        });
+      }catch(err){
+        alert('Failed to load featured article');
+      }
     });
   }
   if(back){
@@ -115,6 +127,7 @@ function initArticleView(){
   const sp=getParams();
   if((sp.get('view')||'')==='article'){
     const payload={
+      slug: sp.get('slug')||'',
       title: sp.get('title')||'',
       image: sp.get('image')||'',
       category: sp.get('category')||'',
@@ -150,6 +163,7 @@ async function loadBlogPosts(params={}){
           <h3>${p.title}</h3>
           <p>${p.excerpt}</p>
           <a href="#" class="read-more" 
+             data-slug="${encodeURIComponent(p.slug)}"
              data-title="${encodeURIComponent(p.title)}"
              data-image="${encodeURIComponent(p.image)}"
              data-category="${encodeURIComponent(p.category)}"
