@@ -1,5 +1,6 @@
 const express = require('express');
 const nodemailer = require('nodemailer');
+const Subscription = require('../models/Subscription');
 const router = express.Router();
 
 // Sample blog data (in a real app, this would come from a database)
@@ -161,11 +162,18 @@ router.get('/categories/list', (req, res) => {
     }
 });
 
-router.post('/newsletter', (req, res) => {
+router.post('/newsletter', async (req, res) => {
     try {
         const { email } = req.body || {};
         if (!email || !email.includes('@')) return res.status(400).json({ error: 'Valid email is required' });
-        console.log(`Newsletter subscription: ${email}`);
+        // Persist to Mongo if configured
+        try{
+            if(process.env.MONGODB_URI){
+                await Subscription.create({ email: String(email).trim().toLowerCase(), source: 'newsletter' });
+            }
+        }catch(dbErr){
+            console.error('Failed to persist subscription:', dbErr?.message);
+        }
         // Email site owner about new subscription if configured
         if (process.env.EMAIL_USER && process.env.EMAIL_PASS) {
             const transporter = nodemailer.createTransport({

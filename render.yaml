@@ -1,0 +1,32 @@
+services:
+  - type: web
+    name: debnil-portfolio-api
+    env: node
+    plan: free
+    region: frankfurt
+    buildCommand: ""
+    startCommand: node server.js
+    autoDeploy: true
+    healthCheckPath: /
+    envVars:
+      - key: NODE_VERSION
+        value: 18
+      - key: PORT
+        value: 3000
+      # Set the following in Render Dashboard with real secrets/values
+      - key: EMAIL_HOST
+        sync: false
+      - key: EMAIL_PORT
+        sync: false
+      - key: EMAIL_USER
+        sync: false
+      - key: EMAIL_PASS
+        sync: false
+      - key: EMAIL_TO
+        sync: false
+      - key: ADMIN_TOKEN
+        sync: false
+      - key: MONGODB_URI
+        sync: false
+      - key: PORTFOLIO_URL
+        sync: false

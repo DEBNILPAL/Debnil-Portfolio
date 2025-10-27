@@ -1,5 +1,6 @@
 const express = require('express');
 const nodemailer = require('nodemailer');
+const ContactMessage = require('../models/ContactMessage');
 const router = express.Router();
 
 const createTransporter = () => {
@@ -19,6 +20,15 @@ router.post('/', async (req, res) => {
     const { name, email, subject, message } = req.body || {};
     if (!name || !email || !subject || !message) return res.status(400).json({ error: 'All fields are required' });
     if (!email.includes('@')) return res.status(400).json({ error: 'Valid email is required' });
+    // Persist to MongoDB if connected/configured
+    try {
+      if (process.env.MONGODB_URI) {
+        await ContactMessage.create({ name: name.trim(), email: email.trim().toLowerCase(), subject: subject.trim(), message: String(message).trim() });
+      }
+    } catch (dbErr) {
+      console.error('Failed to persist contact message:', dbErr?.message);
+      // continue to email even if DB save fails
+    }
 
     const emailContent = {
       from: process.env.EMAIL_USER,
