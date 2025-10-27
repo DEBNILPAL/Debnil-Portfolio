@@ -45,11 +45,58 @@ router.post('/', async (req, res) => {
       title: title.trim(),
       message: message.trim(),
       tags: (tags || '').split(',').filter(Boolean).map(t => t.trim().toLowerCase()),
-      status: 'approved'
+      status: 'approved',
+      messages: [{
+        role: 'user',
+        name: name.trim(),
+        email: email.trim().toLowerCase(),
+        message: message.trim()
+      }]
     });
-    res.status(201).json({ message: 'Recommendation submitted successfully!', recommendation: { id: rec._id, title: rec.title, status: rec.status } });
+    res.status(201).json({ message: 'Discussion created successfully!', recommendation: { id: rec._id, title: rec.title, status: rec.status } });
   } catch (e) {
     res.status(500).json({ error: 'Failed to create recommendation' });
+  }
+});
+
+// Get a single discussion thread with messages
+router.get('/:id', async (req, res) => {
+  try {
+    const rec = await Recommendation.findById(req.params.id);
+    if (!rec || rec.status !== 'approved') return res.status(404).json({ error: 'Discussion not found' });
+    res.json(rec);
+  } catch (e) {
+    res.status(500).json({ error: 'Failed to fetch discussion' });
+  }
+});
+
+// Post a reply to a discussion (user or admin)
+router.post('/:id/replies', async (req, res) => {
+  try {
+    const { name, email, message, adminToken } = req.body || {};
+    const rec = await Recommendation.findById(req.params.id);
+    if (!rec || rec.status !== 'approved') return res.status(404).json({ error: 'Discussion not found' });
+
+    const isAdmin = adminToken && adminToken === process.env.ADMIN_TOKEN;
+    if (!isAdmin) {
+      if (!name || !email || !email.includes('@')) return res.status(400).json({ error: 'Valid name and email required' });
+    }
+
+    const msg = {
+      role: isAdmin ? 'admin' : 'user',
+      name: isAdmin ? 'Admin' : String(name).trim(),
+      email: isAdmin ? undefined : String(email).trim().toLowerCase(),
+      message: String(message || '').trim()
+    };
+    if (!msg.message) return res.status(400).json({ error: 'Message required' });
+
+    rec.messages.push(msg);
+    rec.replies = Math.max(0, (rec.messages?.length || 1) - 1);
+    await rec.save();
+
+    res.status(201).json({ message: 'Reply posted', replies: rec.replies });
+  } catch (e) {
+    res.status(500).json({ error: 'Failed to post reply' });
   }
 });
 

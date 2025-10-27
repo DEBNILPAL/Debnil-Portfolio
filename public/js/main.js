@@ -1,9 +1,31 @@
-document.addEventListener('DOMContentLoaded',function(){hideLoadingScreen();initializeNavigation();initializeTypingEffect();initSkills(document);initProjectFilters();initTechOrbit();initSpaRouter();});
+document.addEventListener('DOMContentLoaded',function(){hideLoadingScreen();initializeNavigation();initializeTypingEffect();initSkills(document);initProjectFilters();initTechOrbit();initSpaRouter();initHomeDiscussionStats();});
 
 function hideLoadingScreen(){
   const ls=document.getElementById('loading-screen');
   if(ls){ ls.style.display='none'; }
+}
 
+// ------- Home: populate mini discussion stats -------
+async function initHomeDiscussionStats(){
+  const elD=document.getElementById('home-discussions-count');
+  const elC=document.getElementById('home-contributors-count');
+  const elT=document.getElementById('home-topics-count');
+  if(!elD||!elC||!elT) return;
+  try{
+    // Pull enough items to compute unique contributors/topics from in-memory API
+    const res=await fetch('/api/recommendations?limit=1000');
+    const data=await res.json();
+    if(!res.ok) throw new Error(data.error||'Failed');
+    const list = data.recommendations||[];
+    const discussions = data.totalRecommendations ?? list.length;
+    const contributors = new Set(list.map(r=> (r.email||'').toLowerCase()).filter(Boolean)).size;
+    const topics = new Set(list.map(r=> r.topic||'')).size;
+    elD.textContent = String(discussions);
+    elC.textContent = String(contributors);
+    elT.textContent = String(topics);
+  }catch(e){
+    // leave defaults
+  }
 }
 
 // ------- Tech orbit around profile photo -------
@@ -57,11 +79,44 @@ function initializeNavigation(){
   }
 }
 
-function initializeTypingEffect(){const typingText=document.getElementById('typing-text');if(!typingText)return;const texts=['Deep Learning Engineer','Machine Learning Practitioner','AI + Cybersecurity Explorer','Competitive Programmer','Space Tech + ML Integrator'];let i=0,j=0,del=false;function type(){const t=texts[i];typingText.textContent=t.slice(0,j);if(!del&&j<t.length){j++;setTimeout(type,100);}else if(!del&&j===t.length){del=true;setTimeout(type,1200);}else if(del&&j>0){j--;setTimeout(type,40);}else{del=false;i=(i+1)%texts.length;setTimeout(type,300);} } type();}
+function initializeTypingEffect(){const typingText=document.getElementById('typing-text');if(!typingText)return;const texts=['Deep Learning Engineer','Machine Learning Practitioner','AI + Cybersecurity Explorer','Web Developer','Space Tech + ML Integrator'];let i=0,j=0,del=false;function type(){const t=texts[i];typingText.textContent=t.slice(0,j);if(!del&&j<t.length){j++;setTimeout(type,100);}else if(!del&&j===t.length){del=true;setTimeout(type,1200);}else if(del&&j>0){j--;setTimeout(type,40);}else{del=false;i=(i+1)%texts.length;setTimeout(type,300);} } type();}
 
 function initSkills(root){
   const scope = root || document;
-  const skillsData={'ai-ml':[ {name:'Python',level:90,icon:'fab fa-python'},{name:'Scikit-learn',level:85,icon:'fas fa-robot'},{name:'Pandas/NumPy',level:88,icon:'fas fa-chart-line'},{name:'ML Ops (Docker)',level:75,icon:'fab fa-docker'},{name:'FastAPI',level:78,icon:'fas fa-bolt'},{name:'Data Visualization',level:80,icon:'fas fa-chart-bar'} ],'deep-learning':[ {name:'PyTorch',level:88,icon:'fas fa-fire'},{name:'TensorFlow/Keras',level:80,icon:'fas fa-microchip'},{name:'CNNs',level:85,icon:'fas fa-images'},{name:'RNN/LSTM',level:75,icon:'fas fa-wave-square'},{name:'Transformers',level:78,icon:'fas fa-project-diagram'},{name:'Computer Vision',level:82,icon:'fas fa-camera'} ],'cybersecurity':[ {name:'Network Security',level:75,icon:'fas fa-network-wired'},{name:'Cryptography',level:72,icon:'fas fa-user-secret'},{name:'Threat Modeling',level:70,icon:'fas fa-shield-alt'},{name:'Anomaly Detection',level:80,icon:'fas fa-radiation'},{name:'Secure Dev Practices',level:78,icon:'fas fa-lock'},{name:'Linux/CLI',level:82,icon:'fas fa-terminal'} ],'competitive-programming':[ {name:'C++',level:85,icon:'fas fa-code'},{name:'Data Structures',level:88,icon:'fas fa-sitemap'},{name:'Graph Algorithms',level:82,icon:'fas fa-project-diagram'},{name:'Dynamic Programming',level:80,icon:'fas fa-chess-knight'},{name:'Number Theory',level:76,icon:'fas fa-superscript'},{name:'Problem Solving',level:90,icon:'fas fa-brain'} ]};
+  const skillsData={
+    'ai-ml':[
+      {name:'Python',level:90,icon:'fab fa-python'},
+      {name:'Scikit-learn',level:85,icon:'fas fa-robot'},
+      {name:'Pandas/NumPy',level:88,icon:'fas fa-chart-line'},
+      {name:'Computer Vision',level:84,icon:'fas fa-camera'},
+      {name:'Model Deployment',level:78,icon:'fas fa-cloud-upload-alt'},
+      {name:'Data Visualization',level:80,icon:'fas fa-chart-bar'}
+    ],
+    'deep-learning':[
+      {name:'PyTorch',level:88,icon:'fas fa-fire'},
+      {name:'CNNs',level:86,icon:'fas fa-images'},
+      {name:'Transformers',level:80,icon:'fas fa-project-diagram'},
+      {name:'Object Detection',level:82,icon:'fas fa-crosshairs'},
+      {name:'RNN/LSTM',level:74,icon:'fas fa-wave-square'},
+      {name:'Training & Tuning',level:78,icon:'fas fa-sliders-h'}
+    ],
+    'cybersecurity':[
+      {name:'Network Security',level:78,icon:'fas fa-network-wired'},
+      {name:'Threat Modeling',level:74,icon:'fas fa-shield-alt'},
+      {name:'Anomaly Detection',level:82,icon:'fas fa-radiation'},
+      {name:'Cryptography',level:72,icon:'fas fa-user-secret'},
+      {name:'Secure Dev Practices',level:78,icon:'fas fa-lock'},
+      {name:'Linux/CLI',level:82,icon:'fas fa-terminal'}
+    ],
+    'web-development':[
+      {name:'JavaScript',level:85,icon:'fab fa-js'},
+      {name:'TypeScript',level:80,icon:'fas fa-code'},
+      {name:'HTML/CSS',level:88,icon:'fab fa-html5'},
+      {name:'Frontend Architecture',level:78,icon:'fas fa-layer-group'},
+      {name:'API Integration',level:80,icon:'fas fa-plug'},
+      {name:'Build & Deploy',level:76,icon:'fas fa-rocket'}
+    ]
+  };
 
   const grid=scope.querySelector('#skills-grid');
   const catContainer=scope.querySelector('.skills-categories');

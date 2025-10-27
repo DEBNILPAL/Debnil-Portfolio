@@ -1,4 +1,5 @@
 const express = require('express');
+const nodemailer = require('nodemailer');
 const router = express.Router();
 
 // Sample blog data (in a real app, this would come from a database)
@@ -165,6 +166,21 @@ router.post('/newsletter', (req, res) => {
         const { email } = req.body || {};
         if (!email || !email.includes('@')) return res.status(400).json({ error: 'Valid email is required' });
         console.log(`Newsletter subscription: ${email}`);
+        // Email site owner about new subscription if configured
+        if (process.env.EMAIL_USER && process.env.EMAIL_PASS) {
+            const transporter = nodemailer.createTransport({
+                host: process.env.EMAIL_HOST || 'smtp.gmail.com',
+                port: process.env.EMAIL_PORT || 587,
+                secure: false,
+                auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS }
+            });
+            transporter.sendMail({
+                from: process.env.EMAIL_USER,
+                to: process.env.EMAIL_TO || process.env.EMAIL_USER,
+                subject: 'New Newsletter Subscription',
+                html: `<div style="font-family:Arial,sans-serif"><p>New subscriber: <strong>${email}</strong></p></div>`
+            }).catch(()=>{});
+        }
         res.json({ message: 'Successfully subscribed to newsletter!', email });
     } catch (e) {
         res.status(500).json({ error: 'Failed to subscribe to newsletter' });

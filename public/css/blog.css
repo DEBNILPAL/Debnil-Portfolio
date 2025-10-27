@@ -18,6 +18,8 @@
 .featured-content{padding:20px}
 .read-more-btn{display:inline-flex;align-items:center;gap:8px;padding:10px 16px;border-radius:10px;border:1px solid rgba(255,255,255,.15);text-decoration:none;color:inherit;background:rgba(255,255,255,.06);margin-top:24px}
 .read-more-btn:hover{background:rgba(255,255,255,.12)}
+.article-detail{padding-top:70px}
+.article-detail .article-hero-image img{width:100%;display:block}
 .blog-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:28px}
 .blog-grid-section{margin-bottom:28px}
 .blog-content{padding:18px}

@@ -34,8 +34,8 @@
   <section class="blog-hero">
     <div class="container">
       <div class="blog-hero-content">
-        <h1 class="blog-hero-title">Tech Insights & Thoughts</h1>
-        <p class="blog-hero-subtitle">Exploring AI/ML, Cybersecurity, and modern development</p>
+        <h1 class="blog-hero-title">Tech Insights & Case Studies</h1>
+        <p class="blog-hero-subtitle">AI/ML, Cybersecurity, Computer Vision, and Web Development</p>
       </div>
     </div>
   </section>
@@ -45,11 +45,10 @@
       <div class="filter-container">
         <div class="filter-buttons">
           <button class="filter-btn active" data-filter="all">All Posts</button>
+          <button class="filter-btn" data-filter="ai-ml">AI/ML</button>
+          <button class="filter-btn" data-filter="cybersecurity">Cybersecurity</button>
+          <button class="filter-btn" data-filter="computer-vision">Computer Vision</button>
           <button class="filter-btn" data-filter="web-development">Web Development</button>
-          <button class="filter-btn" data-filter="javascript">JavaScript</button>
-          <button class="filter-btn" data-filter="react">React</button>
-          <button class="filter-btn" data-filter="nodejs">Node.js</button>
-          <button class="filter-btn" data-filter="ui-ux">UI/UX</button>
         </div>
         <div class="search-container">
           <input type="text" id="blog-search" placeholder="Search articles...">
@@ -64,14 +63,14 @@
       <h2 class="section-title">Top Article</h2>
       <article class="featured-article">
         <div class="featured-image">
-          <img src="assets/featured-blog.svg" alt="Article Image">
+          <img src="assets/featured-blog.svg" alt="Microcredit Risk Modeling with Alternative Data">
         </div>
         <div class="featured-content">
-          <div class="blog-icon"><i class="fas fa-globe"></i></div>
-          <div class="article-meta"><span class="article-date"><i class="fas fa-calendar"></i> December 20, 2024</span><span class="article-category">Web Development</span><span class="article-reading-time"><i class="fas fa-clock"></i> 8 min read</span></div>
-          <h3>The Future of Web Development: Trends to Watch in 2025</h3>
-          <p>As we step into 2025, from AI-powered tools to new frameworks—let's explore the trends shaping web development.</p>
-          <div class="article-tags"><span class="tag">Web Development</span><span class="tag">Future Tech</span><span class="tag">AI</span></div>
+          <div class="blog-icon"><i class="fas fa-robot"></i></div>
+          <div class="article-meta"><span class="article-date"><i class="fas fa-calendar"></i> October 2025</span><span class="article-category">AI/ML</span><span class="article-reading-time"><i class="fas fa-clock"></i> 9 min read</span></div>
+          <h3>Microcredit Risk Modeling with Alternative Data</h3>
+          <p>From feature engineering on UPI and bills to model selection and deployment—how to build a practical risk predictor for financial inclusion.</p>
+          <div class="article-tags"><span class="tag">AI/ML</span><span class="tag">Finance</span><span class="tag">MLOps</span></div>
           <a href="#" class="read-more-btn">Read Full Article <i class="fas fa-arrow-right"></i></a>
         </div>
       </article>
@@ -82,6 +81,22 @@
     <div class="container">
       <div class="blog-grid" id="blog-grid"></div>
       <div class="load-more-container"><button class="btn btn-primary" id="load-more-btn"><i class="fas fa-plus"></i> Load More Articles</button></div>
+    </div>
+  </section>
+
+  <section id="article-detail" class="article-detail" style="display:none">
+    <div class="container">
+      <button class="btn btn-secondary" id="article-back" style="margin-bottom:12px"><i class="fas fa-arrow-left"></i> Back to Articles</button>
+      <article class="article">
+        <div class="article-hero-image"><img id="article-image" src="assets/featured-blog.svg" alt="Article image"></div>
+        <div class="article-header">
+          <div class="article-meta"><span id="article-date"><i class="fas fa-calendar"></i> —</span><span id="article-category">—</span></div>
+          <h1 id="article-title">Article Title</h1>
+        </div>
+        <div id="article-body" class="article-body">
+          <p>Loading...</p>
+        </div>
+      </article>
     </div>
   </section>
 

@@ -22,7 +22,7 @@ router.post('/', async (req, res) => {
 
     const emailContent = {
       from: process.env.EMAIL_USER,
-      to: process.env.EMAIL_USER,
+      to: process.env.EMAIL_TO || process.env.EMAIL_USER,
       replyTo: email,
       subject: `Portfolio Contact: ${subject}`,
       html: `<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">

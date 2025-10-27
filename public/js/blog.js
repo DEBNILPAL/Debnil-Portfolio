@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded',function(){loadBlogPosts({page:1});initFilters();initSearch();initNewsletter();});
+document.addEventListener('DOMContentLoaded',function(){loadBlogPosts({page:1});initFilters();initSearch();initNewsletter();initArticleView();});
 
 function categoryIcon(category='', title=''){
   const c=(category||'').toLowerCase();
@@ -13,6 +13,115 @@ function categoryIcon(category='', title=''){
   if(c.includes('javascript')||c==='js') return 'fab fa-js-square';
   if(c.includes('web')) return 'fas fa-globe';
   return 'fas fa-book-open';
+}
+function initArticleView(){
+  const gridSection=document.querySelector('.blog-grid-section');
+  const featuredSection=document.querySelector('.featured-post');
+  const hero=document.querySelector('.blog-hero');
+  const filters=document.querySelector('.blog-filters');
+  const detail=document.getElementById('article-detail');
+  const back=document.getElementById('article-back');
+  const getParams=()=>new URLSearchParams(location.search);
+  const setParams=(obj)=>{
+    const sp=new URLSearchParams(location.search);
+    Object.entries(obj||{}).forEach(([k,v])=>{
+      if(v===null||v===undefined||v===''){ sp.delete(k); } else { sp.set(k,v); }
+    });
+    const q=sp.toString();
+    const url = q? `${location.pathname}?${q}`: location.pathname;
+    history.replaceState({}, '', url);
+  };
+  const setVisible=(showDetail)=>{
+    detail.style.display=showDetail? 'block':'none';
+    if(hero) hero.style.display=showDetail? 'none':'';
+    if(filters) filters.style.display=showDetail? 'none':'';
+    if(featuredSection) featuredSection.style.display=showDetail? 'none':'';
+    if(gridSection) gridSection.style.display=showDetail? 'none':'';
+    window.scrollTo({top:0,behavior:'smooth'});
+  };
+  function dummyBodyHTML(){
+    return `
+      <p>This is placeholder content for your article. Replace it with your real write-up.</p>
+      <h2>Introduction</h2>
+      <p>Summarize the motivation, goals, and context. Provide links to repos or datasets as needed.</p>
+      <h2>Approach</h2>
+      <p>Outline the methodology, architecture, and tools used. Add diagrams or code snippets.</p>
+      <div class="article-inline-image">
+        <img src="assets/featured-blog.svg" alt="Inline illustration">
+        <span class="caption">Replace with a relevant image or diagram.</span>
+      </div>
+      <h2>Results</h2>
+      <p>Share results, metrics, or demos. Discuss trade-offs and future work.</p>
+      <h2>Conclusion</h2>
+      <p>Wrap up key learnings and direct readers to try the project or read more.</p>
+    `;
+  }
+  function showArticleDetail({title,image,category,date}, {updateUrl}={updateUrl:true}){
+    const t=decodeURIComponent(title||'');
+    const img=decodeURIComponent(image||'');
+    const cat=decodeURIComponent(category||'');
+    const dt=decodeURIComponent(date||'');
+    const titleEl=document.getElementById('article-title');
+    const imgEl=document.getElementById('article-image');
+    const catEl=document.getElementById('article-category');
+    const dateEl=document.getElementById('article-date');
+    const bodyEl=document.getElementById('article-body');
+    if(titleEl) titleEl.textContent=t||'Article Title';
+    if(imgEl) imgEl.src=img||'assets/featured-blog.svg';
+    if(catEl) catEl.textContent=cat||'Blog';
+    if(dateEl) dateEl.innerHTML = `<i class="fas fa-calendar"></i> ${dt? new Date(dt).toLocaleDateString(): ''}`;
+    if(bodyEl) bodyEl.innerHTML=dummyBodyHTML();
+    setVisible(true);
+    if(updateUrl){
+      // Persist selection in URL so refresh keeps the article open
+      setParams({
+        view:'article',
+        title: encodeURIComponent(t),
+        image: encodeURIComponent(img||'assets/featured-blog.svg'),
+        category: encodeURIComponent(cat||'Blog'),
+        date: encodeURIComponent(dt||new Date().toISOString())
+      });
+    }
+  }
+  // Delegate clicks inside blog grid
+  const grid=document.getElementById('blog-grid');
+  if(grid){
+    grid.addEventListener('click',(e)=>{
+      const a=e.target.closest('a.read-more');
+      if(!a) return;
+      e.preventDefault();
+      const data={title:a.dataset.title,image:a.dataset.image,category:a.dataset.category,date:a.dataset.date};
+      showArticleDetail(data);
+    });
+  }
+  // Featured "Read Full Article" button
+  const featuredBtn=document.querySelector('.featured-article .read-more-btn');
+  if(featuredBtn){
+    featuredBtn.addEventListener('click',(e)=>{
+      e.preventDefault();
+      showArticleDetail({
+        title:encodeURIComponent('Microcredit Risk Modeling with Alternative Data'),
+        image:encodeURIComponent('assets/featured-blog.svg'),
+        category:encodeURIComponent('AI/ML'),
+        date:encodeURIComponent(new Date().toISOString())
+      });
+    });
+  }
+  if(back){
+    back.addEventListener('click',()=>{ setVisible(false); setParams({view:null,title:null,image:null,category:null,date:null}); });
+  }
+
+  // Restore article view from URL on load/refresh
+  const sp=getParams();
+  if((sp.get('view')||'')==='article'){
+    const payload={
+      title: sp.get('title')||'',
+      image: sp.get('image')||'',
+      category: sp.get('category')||'',
+      date: sp.get('date')||''
+    };
+    showArticleDetail(payload, {updateUrl:false});
+  }
 }
 
 async function loadBlogPosts(params={}){
@@ -40,7 +149,12 @@ async function loadBlogPosts(params={}){
           </div>
           <h3>${p.title}</h3>
           <p>${p.excerpt}</p>
-          <a href="#" class="read-more">Read More <i class="fas fa-arrow-right"></i></a>
+          <a href="#" class="read-more" 
+             data-title="${encodeURIComponent(p.title)}"
+             data-image="${encodeURIComponent(p.image)}"
+             data-category="${encodeURIComponent(p.category)}"
+             data-date="${encodeURIComponent(p.publishDate)}"
+          >Read More <i class="fas fa-arrow-right"></i></a>
         </div>`;
       grid.appendChild(el);
     });
