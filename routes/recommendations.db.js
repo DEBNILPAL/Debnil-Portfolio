@@ -34,26 +34,37 @@ router.get('/', async (req, res) => {
 // Create
 router.post('/', async (req, res) => {
   try {
-    const { name, email, topic, title, message, tags } = req.body || {};
-    if (!name || !email || !topic || !title || !message) return res.status(400).json({ error: 'Name, email, topic, title, and message are required' });
-    if (!email.includes('@')) return res.status(400).json({ error: 'Valid email is required' });
+    const { name, email, topic, title, message, tags, adminToken, isAnnouncement } = req.body || {};
+    const isAdmin = adminToken && adminToken === process.env.ADMIN_TOKEN;
+
+    if (!isAdmin) {
+      if (!name || !email || !topic || !title || !message) return res.status(400).json({ error: 'Name, email, topic, title, and message are required' });
+      if (!email.includes('@')) return res.status(400).json({ error: 'Valid email is required' });
+    } else {
+      if (!title || !message) return res.status(400).json({ error: 'Title and message are required' });
+    }
+
+    const finalTopic = isAdmin && isAnnouncement ? 'announcement' : (topic || 'general');
+    const finalName = isAdmin ? 'Admin' : String(name).trim();
+    const finalEmail = isAdmin ? undefined : String(email).trim().toLowerCase();
+    const initialRole = isAdmin ? 'admin' : 'user';
 
     const rec = await Recommendation.create({
-      name: name.trim(),
-      email: email.trim().toLowerCase(),
-      topic,
-      title: title.trim(),
-      message: message.trim(),
+      name: finalName,
+      email: finalEmail || 'noreply@example.com',
+      topic: finalTopic,
+      title: String(title).trim(),
+      message: String(message).trim(),
       tags: (tags || '').split(',').filter(Boolean).map(t => t.trim().toLowerCase()),
       status: 'approved',
       messages: [{
-        role: 'user',
-        name: name.trim(),
-        email: email.trim().toLowerCase(),
-        message: message.trim()
+        role: initialRole,
+        name: finalName,
+        email: finalEmail,
+        message: String(message).trim()
       }]
     });
-    res.status(201).json({ message: 'Discussion created successfully!', recommendation: { id: rec._id, title: rec.title, status: rec.status } });
+    res.status(201).json({ message: isAdmin && isAnnouncement ? 'Announcement posted!' : 'Discussion created successfully!', recommendation: { id: rec._id, title: rec.title, status: rec.status } });
   } catch (e) {
     res.status(500).json({ error: 'Failed to create recommendation' });
   }

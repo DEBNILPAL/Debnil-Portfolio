@@ -1,6 +1,10 @@
 /* minimal recommendations styles */
-.recommendations-hero{padding:120px 0 60px;background:linear-gradient(135deg,#f093fb,#f5576c);color:#fff;text-align:center}
-.categories-grid,.discussions-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px}
+.recommendations-hero{padding:70px 0 36px;background:linear-gradient(135deg,#667eea,#06b6d4);color:#fff;text-align:center}
+.recommendations-hero .hero-title{color:#fff}
+.recommendations-hero .hero-subtitle{color:#fff;opacity:1}
+.recommendations-hero .stat-number{color:#fff}
+.recommendations-hero .stat-label{color:#fff;opacity:.95}
+.categories-grid,.discussions-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:24px}
 .form-container{max-width:900px;margin:0 auto;background:var(--surface);padding:16px;border-radius:12px}
 .form-group{display:flex;flex-direction:column;margin-bottom:10px}
 .form-group input,.form-group select,.form-group textarea{padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,.15);background:transparent;color:inherit}
@@ -12,6 +16,14 @@
 .btn-primary{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff}
 .btn-secondary{background:transparent;border-color:#667eea;color:#667eea}
 @media(max-width:900px){.form-row{display:block}.form-actions{flex-direction:column}}
+
+/* Recommendations page specific tweaks */
+.discussions-page .navbar{display:none}
+body.discussions-page{padding-top:0}
+.discussions-page .back-bar{top:0}
+.discussions-page .recommendations-hero{padding-top:80px}
+.discussions-page .recommendation-form-section{margin-top:12px}
+.discussions-page .admin-commands{margin-top:16px}
 
 /* Thread modal and chat */
 #thread-overlay .thread-modal{width:min(900px,95vw);max-height:90vh;overflow:auto;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:12px}

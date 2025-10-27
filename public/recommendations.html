@@ -11,7 +11,7 @@
   <link rel="stylesheet" href="css/recommendations.css">
   <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
 </head>
-<body>
+<body class="discussions-page">
   <div class="back-bar"><a href="/" class="back-link"><i class="fas fa-arrow-left"></i> Back</a></div>
   <nav class="navbar" id="navbar">
     <div class="nav-container">
@@ -37,9 +37,9 @@
         <h1 class="hero-title">Join the Discussion</h1>
         <p class="hero-subtitle">Share your thoughts, recommendations, and insights on technology topics.</p>
         <div class="hero-stats">
-          <div class="stat-item"><span class="stat-number" data-count="150">0</span><span class="stat-label">Discussions</span></div>
-          <div class="stat-item"><span class="stat-number" data-count="500">0</span><span class="stat-label">Contributors</span></div>
-          <div class="stat-item"><span class="stat-number" data-count="20">0</span><span class="stat-label">Topics</span></div>
+          <div class="stat-item"><span class="stat-number" data-count="0">0</span><span class="stat-label">Discussions</span></div>
+          <div class="stat-item"><span class="stat-number" data-count="0">0</span><span class="stat-label">Contributors</span></div>
+          <div class="stat-item"><span class="stat-number" data-count="0">0</span><span class="stat-label">Topics</span></div>
         </div>
       </div>
     </div>
@@ -68,6 +68,26 @@
           <div class="form-group"><label for="message">Your Thoughts & Recommendations</label><textarea id="message" name="message" rows="6" placeholder="Share your insights, recommendations, or questions about the topic..." required></textarea></div>
           <div class="form-group"><label for="tags">Tags (optional)</label><input type="text" id="tags" name="tags" placeholder="e.g., react, javascript, frontend"><small>Separate tags with commas</small></div>
           <div class="form-actions"><button type="submit" class="btn btn-primary"><i class="fas fa-paper-plane"></i> Submit Discussion</button><button type="reset" class="btn btn-secondary"><i class="fas fa-undo"></i> Reset Form</button></div>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <section class="admin-commands">
+    <div class="container">
+      <div class="page-card">
+        <div class="section-header"><h2 class="section-title">Admin Commands</h2><p class="section-subtitle">Post announcements or important updates for everyone</p></div>
+        <form id="admin-command-form" class="admin-form">
+          <div class="form-row">
+            <div class="form-group" style="flex:1"><label for="admin-title">Title</label><input type="text" id="admin-title" name="title" required placeholder="Announcement title"></div>
+          </div>
+          <div class="form-group"><label for="admin-message">Message</label><textarea id="admin-message" name="message" rows="4" required placeholder="Write your announcement..."></textarea></div>
+          <div class="form-row">
+            <div class="form-group" style="flex:1"><label for="admin-tags">Tags (optional)</label><input type="text" id="admin-tags" name="tags" placeholder="e.g., update, info"></div>
+            <div class="form-group" style="flex:1"><label for="admin-token">Admin Token</label><input type="password" id="admin-token" name="adminToken" required placeholder="Enter admin token"></div>
+          </div>
+          <div class="form-group"><label><input type="checkbox" id="admin-is-announcement" name="isAnnouncement" checked> Treat as announcement</label></div>
+          <div class="form-actions"><button type="submit" class="btn btn-primary"><i class="fas fa-bullhorn"></i> Post Announcement</button><button type="reset" class="btn btn-secondary">Reset</button></div>
         </form>
       </div>
     </div>

@@ -9,10 +9,13 @@ let recommendations = [
 ].map(r => ({ ...r, messages: [{ role: 'user', name: r.name, email: r.email, message: r.message, createdAt: r.createdAt }] }));
 
 function createTransporter(){
+  const host = process.env.EMAIL_HOST || 'smtp.gmail.com';
+  const port = Number(process.env.EMAIL_PORT || 587);
+  const secure = (process.env.EMAIL_SECURE === 'true') || port === 465; // SSL for 465
   return nodemailer.createTransport({
-    host: process.env.EMAIL_HOST || 'smtp.gmail.com',
-    port: process.env.EMAIL_PORT || 587,
-    secure: false,
+    host,
+    port,
+    secure,
     auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS }
   });
 }

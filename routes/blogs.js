@@ -176,10 +176,13 @@ router.post('/newsletter', async (req, res) => {
         }
         // Email site owner about new subscription if configured
         if (process.env.EMAIL_USER && process.env.EMAIL_PASS) {
+            const host = process.env.EMAIL_HOST || 'smtp.gmail.com';
+            const port = Number(process.env.EMAIL_PORT || 587);
+            const secure = (process.env.EMAIL_SECURE === 'true') || port === 465; // SSL for 465
             const transporter = nodemailer.createTransport({
-                host: process.env.EMAIL_HOST || 'smtp.gmail.com',
-                port: process.env.EMAIL_PORT || 587,
-                secure: false,
+                host,
+                port,
+                secure,
                 auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS }
             });
             transporter.sendMail({
