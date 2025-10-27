@@ -19,6 +19,8 @@ function initArticleView(){
   const featuredSection=document.querySelector('.featured-post');
   const hero=document.querySelector('.blog-hero');
   const filters=document.querySelector('.blog-filters');
+  const navbar=document.querySelector('.navbar');
+  const footer=document.querySelector('footer');
   const detail=document.getElementById('article-detail');
   const back=document.getElementById('article-back');
   const getParams=()=>new URLSearchParams(location.search);
@@ -37,6 +39,8 @@ function initArticleView(){
     if(filters) filters.style.display=showDetail? 'none':'';
     if(featuredSection) featuredSection.style.display=showDetail? 'none':'';
     if(gridSection) gridSection.style.display=showDetail? 'none':'';
+    if(navbar) navbar.style.display=showDetail? 'none':'';
+    if(footer) footer.style.display=showDetail? 'none':'';
     window.scrollTo({top:0,behavior:'smooth'});
   };
   async function showArticleDetail({slug,title,image,category,date}, {updateUrl}={updateUrl:true}){

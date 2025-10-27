@@ -290,6 +290,7 @@ function initSpaRouter(){
           if(typeof initFilters==='function') initFilters();
           if(typeof initSearch==='function') initSearch();
           if(typeof initNewsletter==='function') initNewsletter();
+          if(typeof initArticleView==='function') initArticleView();
         }
       } else if(path.startsWith('/recommendations')){
         await ensureStylesheet('css/recommendations.css');
