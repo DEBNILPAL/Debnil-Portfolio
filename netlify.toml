@@ -32,6 +32,6 @@
 # Proxy all API calls to the backend (Render). Replace the placeholder URL with your Render service URL.
 [[redirects]]
   from = "/api/*"
-  to = "https://YOUR-RENDER-SERVICE.onrender.com/api/:splat"
+  to = "https://debnil-portfolio.onrender.com/api/:splat"
   status = 200
   force = true
