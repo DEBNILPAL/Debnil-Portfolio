@@ -21,3 +21,6 @@ build/
 
 # Netlify
 .netlify/
+
+# Contact message store (runtime data, not for git)
+data/contact-messages.json

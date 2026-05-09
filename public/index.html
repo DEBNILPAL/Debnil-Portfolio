@@ -8,6 +8,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/blog.css">
   <link rel="stylesheet" href="css/animations.css">
   <link rel="stylesheet" href="css/responsive.css">
   <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
@@ -232,13 +233,13 @@ The future is intelligent — and I’m coding my way into it.</p>
 
   <section id="blog-preview" class="blog-preview">
     <div class="container">
-      <div class="section-header"><h2 class="section-title">Latest Blog Posts</h2><p class="section-subtitle">Thoughts and insights on technology</p></div>
+      <div class="section-header"><h2 class="section-title">Latest Blog Posts</h2><p class="section-subtitle">Deep dives into ML, NLP, Deep Learning, and Quantum Computing</p></div>
       <div class="blog-grid">
-        <article class="blog-card"><div class="blog-image"><img src="assets/blog1.svg" alt="AI meets Cybersecurity"></div><div class="blog-content"><div class="blog-meta"><span class="blog-date">Oct 2025</span><span class="blog-category">AI + Cybersecurity</span></div><h3>AI for Threat Detection: From Anomalies to Actions</h3><p>How ML pipelines can detect network anomalies and harden systems—lessons from building risk and intrusion tools.</p><a href="blogs.html" class="read-more">Read More <i class="fas fa-arrow-right"></i></a></div></article>
-        <article class="blog-card"><div class="blog-image"><img src="assets/blog2.svg" alt="Microcredit Risk"></div><div class="blog-content"><div class="blog-meta"><span class="blog-date">Oct 2025</span><span class="blog-category">AI/ML</span></div><h3>Microcredit Risk Modeling with Alternative Data</h3><p>Designing a robust scoring system from UPI, recharges, and bills: features, models, and deployment tips.</p><a href="blogs.html" class="read-more">Read More <i class="fas fa-arrow-right"></i></a></div></article>
-        <article class="blog-card"><div class="blog-image"><img src="assets/blog3.svg" alt="Lunar CV"></div><div class="blog-content"><div class="blog-meta"><span class="blog-date">Oct 2025</span><span class="blog-category">Computer Vision</span></div><h3>Detecting Landslides on the Moon with CV</h3><p>A practical workflow for boulder/landslide detection in extraterrestrial imagery: datasets, pre-processing, and models.</p><a href="blogs.html" class="read-more">Read More <i class="fas fa-arrow-right"></i></a></div></article>
+        <article class="blog-card"><div class="blog-image"><img src="assets/blog1.svg" alt="Gradient Boosting vs Neural Networks"></div><div class="blog-content"><div class="blog-meta"><span class="blog-date">May 2026</span><span class="blog-category">Machine Learning</span></div><h3>Gradient Boosting vs. Neural Networks: When Classical ML Still Wins</h3><p>A deep-dive into why gradient-boosted trees consistently outperform deep learning on tabular data.</p><a href="/blogs" class="read-more">Read More <i class="fas fa-arrow-right"></i></a></div></article>
+        <article class="blog-card"><div class="blog-image"><img src="assets/blog2.svg" alt="NLP Tokenization"></div><div class="blog-content"><div class="blog-meta"><span class="blog-date">Apr 2026</span><span class="blog-category">NLP</span></div><h3>Attention Is All You Need — But Tokenization Is All You Forget</h3><p>How tokenization strategies silently shape every NLP model's performance, from BPE to byte-level.</p><a href="/blogs" class="read-more">Read More <i class="fas fa-arrow-right"></i></a></div></article>
+        <article class="blog-card"><div class="blog-image"><img src="assets/blog3.svg" alt="Deep Learning Residual Connections"></div><div class="blog-content"><div class="blog-meta"><span class="blog-date">Apr 2026</span><span class="blog-category">Deep Learning</span></div><h3>Residual Connections, Skip Paths, and the Geometry of Deep Networks</h3><p>Why residual connections are the single most important architectural innovation in deep learning.</p><a href="/blogs" class="read-more">Read More <i class="fas fa-arrow-right"></i></a></div></article>
       </div>
-      <div class="blog-cta"><a href="blogs.html" class="btn btn-primary">View All Posts</a></div>
+      <div class="blog-cta"><a href="/blogs" class="btn btn-primary">View All Posts</a></div>
     </div>
   </section>
 
@@ -261,7 +262,7 @@ The future is intelligent — and I’m coding my way into it.</p>
             <li><a href="https://www.facebook.com/profile.php?id=100091180033224" target="_blank">Facebook</a></li>
           </ul>
         </div>
-        <form class="contact-form" id="contact-form"><div class="form-group"><input type="text" name="name" placeholder="Your Name" required></div><div class="form-group"><input type="email" name="email" placeholder="Your Email" required></div><div class="form-group"><input type="text" name="subject" placeholder="Subject" required></div><div class="form-group"><textarea name="message" placeholder="Your Message" rows="5" required></textarea></div><button type="submit" class="btn btn-primary"><i class="fas fa-paper-plane"></i>Send Message</button></form>
+        <form class="contact-form" id="contact-form"><div class="form-group"><input type="text" name="name" placeholder="Your Name" required></div><div class="form-group"><input type="email" name="email" placeholder="Your Email" required></div><div class="form-group"><input type="text" name="subject" placeholder="Subject" required></div><div class="form-group"><textarea name="message" placeholder="Your Message" rows="5" required></textarea></div><button type="submit" class="btn btn-primary"><i class="fas fa-paper-plane"></i>Send Message</button><div id="contact-status" class="contact-status" style="display:none"></div></form>
       </div>
       <div class="recommendations-cta">
         <div class="recommendations-card">
@@ -304,6 +305,49 @@ The future is intelligent — and I’m coding my way into it.</p>
         btn.innerHTML = isHidden
           ? '<i class="fas fa-chevron-up"></i> Show Less'
           : '<i class="fas fa-chevron-down"></i> Show More';
+      });
+    })();
+  </script>
+  <script>
+    // Home page "Get In Touch" contact form handler
+    (function(){
+      const form = document.getElementById('contact-form');
+      if(!form) return;
+      form.addEventListener('submit', async function(e){
+        e.preventDefault();
+        const btn = form.querySelector('button[type="submit"]');
+        const statusEl = document.getElementById('contact-status');
+        const data = Object.fromEntries(new FormData(form).entries());
+        const oldHTML = btn.innerHTML;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+        btn.disabled = true;
+        if(statusEl) statusEl.style.display = 'none';
+        try {
+          const res = await fetch('/api/contact', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+          });
+          const result = await res.json();
+          if(!res.ok) throw new Error(result.error || 'Failed to send');
+          if(statusEl) {
+            statusEl.className = 'contact-status success';
+            statusEl.innerHTML = '<i class="fas fa-check-circle"></i> ' + (result.message || 'Message sent successfully!');
+            statusEl.style.display = 'block';
+            setTimeout(() => { statusEl.style.display = 'none'; }, 6000);
+          }
+          form.reset();
+        } catch(err) {
+          if(statusEl) {
+            statusEl.className = 'contact-status error';
+            statusEl.innerHTML = '<i class="fas fa-exclamation-circle"></i> ' + (err.message || 'Failed to send. Please try again.');
+            statusEl.style.display = 'block';
+            setTimeout(() => { statusEl.style.display = 'none'; }, 6000);
+          }
+        } finally {
+          btn.innerHTML = oldHTML;
+          btn.disabled = false;
+        }
       });
     })();
   </script>

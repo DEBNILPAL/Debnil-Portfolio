@@ -1,99 +1,26 @@
 const express = require('express');
 const nodemailer = require('nodemailer');
+const path = require('path');
+const fs = require('fs');
 const Subscription = require('../models/Subscription');
 const router = express.Router();
 
-// Sample blog data (in a real app, this would come from a database)
-const blogPosts = [
-    {
-        id: 1,
-        title: "The Future of Web Development: Trends to Watch in 2025",
-        slug: "future-web-development-2025",
-        excerpt: "Exploring emerging trends and technologies that will shape web development in 2025.",
-        content: "Full article content here...",
-        author: "Debnil Pal",
-        publishDate: "2024-12-20",
-        category: "web-development",
-        tags: ["web development", "future tech", "AI", "frameworks"],
-        readingTime: 8,
-        featured: true,
-        image: "assets/featured-blog.svg"
-    },
-    {
-        id: 2,
-        title: "Modern JavaScript Best Practices for 2024",
-        slug: "javascript-best-practices-2024",
-        excerpt: "Essential practices every JavaScript developer should follow in 2024.",
-        content: "Full article content here...",
-        author: "Debnil Pal",
-        publishDate: "2024-12-15",
-        category: "javascript",
-        tags: ["javascript", "best practices", "ES6", "performance"],
-        readingTime: 6,
-        featured: false,
-        image: "assets/blog2.svg"
-    },
-    {
-        id: 3,
-        title: "Creating Intuitive User Interfaces with React",
-        slug: "intuitive-ui-react",
-        excerpt: "Design principles for building user-friendly and accessible React interfaces.",
-        content: "Full article content here...",
-        author: "Debnil Pal",
-        publishDate: "2024-12-10",
-        category: "react",
-        tags: ["react", "UI/UX", "accessibility", "design"],
-        readingTime: 7,
-        featured: false,
-        image: "assets/blog3.svg"
-    },
-    {
-        id: 4,
-        title: "Node.js Performance Optimization Techniques",
-        slug: "nodejs-performance-optimization",
-        excerpt: "Advanced techniques to optimize your Node.js applications for better performance.",
-        content: "Full article content here...",
-        author: "Debnil Pal",
-        publishDate: "2024-12-05",
-        category: "nodejs",
-        tags: ["nodejs", "performance", "optimization", "backend"],
-        readingTime: 9,
-        featured: false,
-        image: "assets/blog1.svg"
-    },
-    {
-        id: 5,
-        title: "CSS Grid vs Flexbox: When to Use Which",
-        slug: "css-grid-vs-flexbox",
-        excerpt: "Understanding the differences between CSS Grid and Flexbox and when to use each.",
-        content: "Full article content here...",
-        author: "Debnil Pal",
-        publishDate: "2024-11-30",
-        category: "web-development",
-        tags: ["CSS", "grid", "flexbox", "layout"],
-        readingTime: 5,
-        featured: false,
-        image: "public/assets/blog2.svg"
-    },
-    {
-        id: 6,
-        title: "Building Responsive Web Applications",
-        slug: "responsive-web-applications",
-        excerpt: "Complete guide to creating responsive web applications that work on all devices.",
-        content: "Full article content here...",
-        author: "Debnil Pal",
-        publishDate: "2024-11-25",
-        category: "web-development",
-        tags: ["responsive", "mobile", "CSS", "design"],
-        readingTime: 8,
-        featured: false,
-        image: "public/assets/blog3.svg"
+// Load blog posts from JSON file
+function loadBlogPosts() {
+    const filePath = path.join(__dirname, '..', 'public', 'data', 'blogs.json');
+    try {
+        const raw = fs.readFileSync(filePath, 'utf-8');
+        return JSON.parse(raw);
+    } catch (err) {
+        console.error('Failed to load blogs.json:', err.message);
+        return [];
     }
-];
+}
 
 // Get all blog posts with filtering and pagination
 router.get('/', (req, res) => {
     try {
+        const blogPosts = loadBlogPosts();
         const { category, search, page = 1, limit = 6 } = req.query;
         let filteredPosts = [...blogPosts];
 
@@ -129,6 +56,7 @@ router.get('/', (req, res) => {
 
 router.get('/featured', (req, res) => {
     try {
+        const blogPosts = loadBlogPosts();
         const featuredPost = blogPosts.find(post => post.featured);
         if (featuredPost) return res.json(featuredPost);
         res.status(404).json({ error: 'No featured post found' });
@@ -139,6 +67,7 @@ router.get('/featured', (req, res) => {
 
 router.get('/:slug', (req, res) => {
     try {
+        const blogPosts = loadBlogPosts();
         const post = blogPosts.find(p => p.slug === req.params.slug);
         if (post) return res.json(post);
         res.status(404).json({ error: 'Blog post not found' });
@@ -149,6 +78,7 @@ router.get('/:slug', (req, res) => {
 
 router.get('/categories/list', (req, res) => {
     try {
+        const blogPosts = loadBlogPosts();
         const counts = {};
         blogPosts.forEach(p => counts[p.category] = (counts[p.category] || 0) + 1);
         const categoryList = Object.entries(counts).map(([name, count]) => ({

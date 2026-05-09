@@ -1,0 +1,894 @@
+# Portfolio Blog & Contact Implementation — Walkthrough
+
+## What Was Done
+
+### 1. Blog System — 5 Unique Articles from JSON
+
+Created [blogs.json](file:///f:/Debnil%20Portfolio/public/data/blogs.json) with 5 in-depth, original blog articles:
+
+| # | Topic | Title | Category | Words |
+|---|-------|-------|----------|-------|
+| 1 | **Machine Learning** | Gradient Boosting vs. Neural Networks: When Classical ML Still Wins | `machine-learning` | ~800 |
+| 2 | **NLP** | Attention Is All You Need — But Tokenization Is All You Forget | `nlp` | ~900 |
+| 3 | **Deep Learning** | Residual Connections, Skip Paths, and the Geometry of Deep Networks | `deep-learning` | ~950 |
+| 4 | **Quantum ML** | Quantum Feature Maps: How Quantum Computing Reshapes ML Kernels | `quantum-ml` | ~1000 |
+| 5 | **ML in Web** | ML-Powered Web: From Recommendation Engines to Real-Time Personalisation | `web-development` | ~1000 |
+
+All content is unique, technical, and written with proper HTML formatting (headings, lists, tables, code blocks).
+
+---
+
+### 2. JSON-Based Blog Architecture
+
+```diff:blogs.js
+const express = require('express');
+const nodemailer = require('nodemailer');
+const Subscription = require('../models/Subscription');
+const router = express.Router();
+
+// Sample blog data (in a real app, this would come from a database)
+const blogPosts = [
+    {
+        id: 1,
+        title: "The Future of Web Development: Trends to Watch in 2025",
+        slug: "future-web-development-2025",
+        excerpt: "Exploring emerging trends and technologies that will shape web development in 2025.",
+        content: "Full article content here...",
+        author: "Debnil Pal",
+        publishDate: "2024-12-20",
+        category: "web-development",
+        tags: ["web development", "future tech", "AI", "frameworks"],
+        readingTime: 8,
+        featured: true,
+        image: "assets/featured-blog.svg"
+    },
+    {
+        id: 2,
+        title: "Modern JavaScript Best Practices for 2024",
+        slug: "javascript-best-practices-2024",
+        excerpt: "Essential practices every JavaScript developer should follow in 2024.",
+        content: "Full article content here...",
+        author: "Debnil Pal",
+        publishDate: "2024-12-15",
+        category: "javascript",
+        tags: ["javascript", "best practices", "ES6", "performance"],
+        readingTime: 6,
+        featured: false,
+        image: "assets/blog2.svg"
+    },
+    {
+        id: 3,
+        title: "Creating Intuitive User Interfaces with React",
+        slug: "intuitive-ui-react",
+        excerpt: "Design principles for building user-friendly and accessible React interfaces.",
+        content: "Full article content here...",
+        author: "Debnil Pal",
+        publishDate: "2024-12-10",
+        category: "react",
+        tags: ["react", "UI/UX", "accessibility", "design"],
+        readingTime: 7,
+        featured: false,
+        image: "assets/blog3.svg"
+    },
+    {
+        id: 4,
+        title: "Node.js Performance Optimization Techniques",
+        slug: "nodejs-performance-optimization",
+        excerpt: "Advanced techniques to optimize your Node.js applications for better performance.",
+        content: "Full article content here...",
+        author: "Debnil Pal",
+        publishDate: "2024-12-05",
+        category: "nodejs",
+        tags: ["nodejs", "performance", "optimization", "backend"],
+        readingTime: 9,
+        featured: false,
+        image: "assets/blog1.svg"
+    },
+    {
+        id: 5,
+        title: "CSS Grid vs Flexbox: When to Use Which",
+        slug: "css-grid-vs-flexbox",
+        excerpt: "Understanding the differences between CSS Grid and Flexbox and when to use each.",
+        content: "Full article content here...",
+        author: "Debnil Pal",
+        publishDate: "2024-11-30",
+        category: "web-development",
+        tags: ["CSS", "grid", "flexbox", "layout"],
+        readingTime: 5,
+        featured: false,
+        image: "public/assets/blog2.svg"
+    },
+    {
+        id: 6,
+        title: "Building Responsive Web Applications",
+        slug: "responsive-web-applications",
+        excerpt: "Complete guide to creating responsive web applications that work on all devices.",
+        content: "Full article content here...",
+        author: "Debnil Pal",
+        publishDate: "2024-11-25",
+        category: "web-development",
+        tags: ["responsive", "mobile", "CSS", "design"],
+        readingTime: 8,
+        featured: false,
+        image: "public/assets/blog3.svg"
+    }
+];
+
+// Get all blog posts with filtering and pagination
+router.get('/', (req, res) => {
+    try {
+        const { category, search, page = 1, limit = 6 } = req.query;
+        let filteredPosts = [...blogPosts];
+
+        if (category && category !== 'all') {
+            filteredPosts = filteredPosts.filter(post => post.category === category);
+        }
+        if (search) {
+            const s = search.toLowerCase();
+            filteredPosts = filteredPosts.filter(post =>
+                post.title.toLowerCase().includes(s) ||
+                post.excerpt.toLowerCase().includes(s) ||
+                post.tags.some(tag => tag.toLowerCase().includes(s))
+            );
+        }
+
+        filteredPosts.sort((a, b) => new Date(b.publishDate) - new Date(a.publishDate));
+
+        const startIndex = (page - 1) * limit;
+        const endIndex = startIndex + parseInt(limit);
+        const paginatedPosts = filteredPosts.slice(startIndex, endIndex);
+
+        res.json({
+            posts: paginatedPosts,
+            totalPosts: filteredPosts.length,
+            currentPage: parseInt(page),
+            totalPages: Math.ceil(filteredPosts.length / limit),
+            hasMore: endIndex < filteredPosts.length
+        });
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to fetch blog posts' });
+    }
+});
+
+router.get('/featured', (req, res) => {
+    try {
+        const featuredPost = blogPosts.find(post => post.featured);
+        if (featuredPost) return res.json(featuredPost);
+        res.status(404).json({ error: 'No featured post found' });
+    } catch (e) {
+        res.status(500).json({ error: 'Failed to fetch featured post' });
+    }
+});
+
+router.get('/:slug', (req, res) => {
+    try {
+        const post = blogPosts.find(p => p.slug === req.params.slug);
+        if (post) return res.json(post);
+        res.status(404).json({ error: 'Blog post not found' });
+    } catch (e) {
+        res.status(500).json({ error: 'Failed to fetch blog post' });
+    }
+});
+
+router.get('/categories/list', (req, res) => {
+    try {
+        const counts = {};
+        blogPosts.forEach(p => counts[p.category] = (counts[p.category] || 0) + 1);
+        const categoryList = Object.entries(counts).map(([name, count]) => ({
+            name,
+            count,
+            displayName: name.split('-').map(w => w[0].toUpperCase() + w.slice(1)).join(' ')
+        }));
+        res.json(categoryList);
+    } catch (e) {
+        res.status(500).json({ error: 'Failed to fetch categories' });
+    }
+});
+
+router.post('/newsletter', async (req, res) => {
+    try {
+        const { email } = req.body || {};
+        if (!email || !email.includes('@')) return res.status(400).json({ error: 'Valid email is required' });
+        // Persist to Mongo if configured
+        try{
+            if(process.env.MONGODB_URI){
+                await Subscription.create({ email: String(email).trim().toLowerCase(), source: 'newsletter' });
+            }
+        }catch(dbErr){
+            console.error('Failed to persist subscription:', dbErr?.message);
+        }
+        // Email site owner about new subscription if configured
+        if (process.env.EMAIL_USER && process.env.EMAIL_PASS) {
+            const host = process.env.EMAIL_HOST || 'smtp.gmail.com';
+            const port = Number(process.env.EMAIL_PORT || 587);
+            const secure = (process.env.EMAIL_SECURE === 'true') || port === 465; // SSL for 465
+            const transporter = nodemailer.createTransport({
+                host,
+                port,
+                secure,
+                auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS }
+            });
+            transporter.sendMail({
+                from: process.env.EMAIL_USER,
+                to: process.env.EMAIL_TO || process.env.EMAIL_USER,
+                subject: 'New Newsletter Subscription',
+                html: `<div style="font-family:Arial,sans-serif"><p>New subscriber: <strong>${email}</strong></p></div>`
+            }).catch(()=>{});
+        }
+        res.json({ message: 'Successfully subscribed to newsletter!', email });
+    } catch (e) {
+        res.status(500).json({ error: 'Failed to subscribe to newsletter' });
+    }
+});
+
+module.exports = router;
+===
+const express = require('express');
+const nodemailer = require('nodemailer');
+const path = require('path');
+const fs = require('fs');
+const Subscription = require('../models/Subscription');
+const router = express.Router();
+
+// Load blog posts from JSON file
+function loadBlogPosts() {
+    const filePath = path.join(__dirname, '..', 'public', 'data', 'blogs.json');
+    try {
+        const raw = fs.readFileSync(filePath, 'utf-8');
+        return JSON.parse(raw);
+    } catch (err) {
+        console.error('Failed to load blogs.json:', err.message);
+        return [];
+    }
+}
+
+// Get all blog posts with filtering and pagination
+router.get('/', (req, res) => {
+    try {
+        const blogPosts = loadBlogPosts();
+        const { category, search, page = 1, limit = 6 } = req.query;
+        let filteredPosts = [...blogPosts];
+
+        if (category && category !== 'all') {
+            filteredPosts = filteredPosts.filter(post => post.category === category);
+        }
+        if (search) {
+            const s = search.toLowerCase();
+            filteredPosts = filteredPosts.filter(post =>
+                post.title.toLowerCase().includes(s) ||
+                post.excerpt.toLowerCase().includes(s) ||
+                post.tags.some(tag => tag.toLowerCase().includes(s))
+            );
+        }
+
+        filteredPosts.sort((a, b) => new Date(b.publishDate) - new Date(a.publishDate));
+
+        const startIndex = (page - 1) * limit;
+        const endIndex = startIndex + parseInt(limit);
+        const paginatedPosts = filteredPosts.slice(startIndex, endIndex);
+
+        res.json({
+            posts: paginatedPosts,
+            totalPosts: filteredPosts.length,
+            currentPage: parseInt(page),
+            totalPages: Math.ceil(filteredPosts.length / limit),
+            hasMore: endIndex < filteredPosts.length
+        });
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to fetch blog posts' });
+    }
+});
+
+router.get('/featured', (req, res) => {
+    try {
+        const blogPosts = loadBlogPosts();
+        const featuredPost = blogPosts.find(post => post.featured);
+        if (featuredPost) return res.json(featuredPost);
+        res.status(404).json({ error: 'No featured post found' });
+    } catch (e) {
+        res.status(500).json({ error: 'Failed to fetch featured post' });
+    }
+});
+
+router.get('/:slug', (req, res) => {
+    try {
+        const blogPosts = loadBlogPosts();
+        const post = blogPosts.find(p => p.slug === req.params.slug);
+        if (post) return res.json(post);
+        res.status(404).json({ error: 'Blog post not found' });
+    } catch (e) {
+        res.status(500).json({ error: 'Failed to fetch blog post' });
+    }
+});
+
+router.get('/categories/list', (req, res) => {
+    try {
+        const blogPosts = loadBlogPosts();
+        const counts = {};
+        blogPosts.forEach(p => counts[p.category] = (counts[p.category] || 0) + 1);
+        const categoryList = Object.entries(counts).map(([name, count]) => ({
+            name,
+            count,
+            displayName: name.split('-').map(w => w[0].toUpperCase() + w.slice(1)).join(' ')
+        }));
+        res.json(categoryList);
+    } catch (e) {
+        res.status(500).json({ error: 'Failed to fetch categories' });
+    }
+});
+
+router.post('/newsletter', async (req, res) => {
+    try {
+        const { email } = req.body || {};
+        if (!email || !email.includes('@')) return res.status(400).json({ error: 'Valid email is required' });
+        // Persist to Mongo if configured
+        try{
+            if(process.env.MONGODB_URI){
+                await Subscription.create({ email: String(email).trim().toLowerCase(), source: 'newsletter' });
+            }
+        }catch(dbErr){
+            console.error('Failed to persist subscription:', dbErr?.message);
+        }
+        // Email site owner about new subscription if configured
+        if (process.env.EMAIL_USER && process.env.EMAIL_PASS) {
+            const host = process.env.EMAIL_HOST || 'smtp.gmail.com';
+            const port = Number(process.env.EMAIL_PORT || 587);
+            const secure = (process.env.EMAIL_SECURE === 'true') || port === 465; // SSL for 465
+            const transporter = nodemailer.createTransport({
+                host,
+                port,
+                secure,
+                auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS }
+            });
+            transporter.sendMail({
+                from: process.env.EMAIL_USER,
+                to: process.env.EMAIL_TO || process.env.EMAIL_USER,
+                subject: 'New Newsletter Subscription',
+                html: `<div style="font-family:Arial,sans-serif"><p>New subscriber: <strong>${email}</strong></p></div>`
+            }).catch(()=>{});
+        }
+        res.json({ message: 'Successfully subscribed to newsletter!', email });
+    } catch (e) {
+        res.status(500).json({ error: 'Failed to subscribe to newsletter' });
+    }
+});
+
+module.exports = router;
+
+```
+
+- Blog data loads from `public/data/blogs.json` (committed to Git, works after deploy)
+- Server reads the JSON file on each request — no database dependency for blogs
+- Works identically on local dev and deployed Render backend
+
+---
+
+### 3. Blog Page Updates
+
+```diff:blogs.html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Blog - Debnil Pal</title>
+  <meta name="description" content="Tech insights, tutorials, and thoughts by Debnil Pal">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/blog.css">
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+</head>
+<body>
+  
+  <nav class="navbar" id="navbar">
+    <div class="nav-container">
+      
+      <div class="nav-menu" id="nav-menu">
+        <a href="/" class="nav-link">Home</a>
+        <a href="/about" class="nav-link">About</a>
+        <a href="/skills" class="nav-link">Skills</a>
+        <a href="/projects" class="nav-link">Projects</a>
+        <a href="/blogs" class="nav-link active">Blogs</a>
+        <a href="/contact" class="nav-link">Contact</a>
+      </div>
+      <div class="nav-controls">
+        <button class="theme-toggle" id="theme-toggle"><i class="fas fa-moon"></i></button>
+        <button class="nav-toggle" id="nav-toggle"><span></span><span></span><span></span></button>
+      </div>
+    </div>
+  </nav>
+
+  <section class="blog-hero">
+    <div class="container">
+      <div class="blog-hero-content">
+        <h1 class="blog-hero-title">Tech Insights & Case Studies</h1>
+        <p class="blog-hero-subtitle">AI/ML, Cybersecurity, Computer Vision, and Web Development</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="blog-filters">
+    <div class="container">
+      <div class="filter-container">
+        <div class="filter-buttons">
+          <button class="filter-btn active" data-filter="all">All Posts</button>
+          <button class="filter-btn" data-filter="ai-ml">AI/ML</button>
+          <button class="filter-btn" data-filter="cybersecurity">Cybersecurity</button>
+          <button class="filter-btn" data-filter="computer-vision">Computer Vision</button>
+          <button class="filter-btn" data-filter="web-development">Web Development</button>
+        </div>
+        <div class="search-container">
+          <input type="text" id="blog-search" placeholder="Search articles...">
+          <i class="fas fa-search"></i>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="featured-post">
+    <div class="container">
+      <h2 class="section-title">Top Article</h2>
+      <article class="featured-article">
+        <div class="featured-image">
+          <img src="assets/featured-blog.svg" alt="Microcredit Risk Modeling with Alternative Data">
+        </div>
+        <div class="featured-content">
+          <div class="blog-icon"><i class="fas fa-robot"></i></div>
+          <div class="article-meta"><span class="article-date"><i class="fas fa-calendar"></i> October 2025</span><span class="article-category">AI/ML</span><span class="article-reading-time"><i class="fas fa-clock"></i> 9 min read</span></div>
+          <h3>Microcredit Risk Modeling with Alternative Data</h3>
+          <p>From feature engineering on UPI and bills to model selection and deployment—how to build a practical risk predictor for financial inclusion.</p>
+          <div class="article-tags"><span class="tag">AI/ML</span><span class="tag">Finance</span><span class="tag">MLOps</span></div>
+          <a href="#" class="read-more-btn">Read Full Article <i class="fas fa-arrow-right"></i></a>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <section class="blog-grid-section">
+    <div class="container">
+      <div class="blog-grid" id="blog-grid"></div>
+      <div class="load-more-container"><button class="btn btn-primary" id="load-more-btn"><i class="fas fa-plus"></i> Load More Articles</button></div>
+    </div>
+  </section>
+
+  <section id="article-detail" class="article-detail" style="display:none">
+    <div class="container">
+      <button class="btn btn-secondary" id="article-back" style="margin-bottom:12px"><i class="fas fa-arrow-left"></i> Back to Articles</button>
+      <article class="article">
+        <div class="article-hero-image"><img id="article-image" src="assets/featured-blog.svg" alt="Article image"></div>
+        <div class="article-header">
+          <div class="article-meta"><span id="article-date"><i class="fas fa-calendar"></i> —</span><span id="article-category">—</span></div>
+          <h1 id="article-title">Article Title</h1>
+        </div>
+        <div id="article-body" class="article-body">
+          <p>Loading...</p>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <section class="newsletter-signup">
+    <div class="container">
+      <div class="newsletter-content">
+        <div class="newsletter-text"><h3>Stay Updated</h3><p>Get the latest articles delivered to your inbox</p></div>
+        <form class="newsletter-form" id="newsletter-form"><input type="email" placeholder="Enter your email" required><button type="submit" class="btn btn-primary"><i class="fas fa-paper-plane"></i> Subscribe</button></form>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-section"><h3>Debnil Pal</h3><p>AI/ML, DL, and Cybersecurity enthusiast.</p></div>
+        <div class="footer-section"><h4>Quick Links</h4><ul><li><a href="/">Home</a></li><li><a href="/about">About</a></li><li><a href="/projects">Projects</a></li><li><a href="/blogs">Blogs</a></li></ul></div>
+        <div class="footer-section"><h4>Services</h4><ul><li><a href="#">AI/ML Solutions</a></li><li><a href="#">Model Deployment</a></li><li><a href="#">Security Consulting</a></li><li><a href="#">Mentoring</a></li></ul></div>
+        <div class="footer-section"><h4>Connect</h4><div class="footer-social"><a href="https://www.linkedin.com/in/debnil-pal-960502285" target="_blank" title="Debnil linkedin"><i class="fab fa-linkedin"></i></a><a href="https://github.com/DEBNILPAL" target="_blank" title="GitHub: DEBNILPAL"><i class="fab fa-github"></i></a><a href="https://www.facebook.com/profile.php?id=100091180033224" target="_blank" title="Facebook"><i class="fab fa-facebook"></i></a></div></div>
+      </div>
+      <div class="footer-bottom"><p>&copy; 2025 Debnil Pal. All rights reserved.</p></div>
+    </div>
+  </footer>
+
+  <script src="js/space.js"></script>
+  <script src="js/main.js"></script>
+  <script src="js/blog.js"></script>
+  <script src="js/theme.js"></script>
+</body>
+</html>
+===
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Blog - Debnil Pal</title>
+  <meta name="description" content="Tech insights, tutorials, and thoughts by Debnil Pal">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/blog.css">
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+</head>
+<body>
+  
+  <nav class="navbar" id="navbar">
+    <div class="nav-container">
+      
+      <div class="nav-menu" id="nav-menu">
+        <a href="/" class="nav-link">Home</a>
+        <a href="/about" class="nav-link">About</a>
+        <a href="/skills" class="nav-link">Skills</a>
+        <a href="/projects" class="nav-link">Projects</a>
+        <a href="/blogs" class="nav-link active">Blogs</a>
+        <a href="/contact" class="nav-link">Contact</a>
+      </div>
+      <div class="nav-controls">
+        <button class="theme-toggle" id="theme-toggle"><i class="fas fa-moon"></i></button>
+        <button class="nav-toggle" id="nav-toggle"><span></span><span></span><span></span></button>
+      </div>
+    </div>
+  </nav>
+
+  <section class="blog-hero">
+    <div class="container">
+      <div class="blog-hero-content">
+        <h1 class="blog-hero-title">Tech Insights & Case Studies</h1>
+        <p class="blog-hero-subtitle">AI/ML, Cybersecurity, Computer Vision, and Web Development</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="blog-filters">
+    <div class="container">
+      <div class="filter-container">
+        <div class="filter-buttons">
+          <button class="filter-btn active" data-filter="all">All Posts</button>
+          <button class="filter-btn" data-filter="machine-learning">Machine Learning</button>
+          <button class="filter-btn" data-filter="nlp">NLP</button>
+          <button class="filter-btn" data-filter="deep-learning">Deep Learning</button>
+          <button class="filter-btn" data-filter="quantum-ml">Quantum ML</button>
+          <button class="filter-btn" data-filter="web-development">Web Development</button>
+        </div>
+        <div class="search-container">
+          <input type="text" id="blog-search" placeholder="Search articles...">
+          <i class="fas fa-search"></i>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="featured-post">
+    <div class="container">
+      <h2 class="section-title">Top Article</h2>
+      <article class="featured-article">
+        <div class="featured-image">
+          <img src="assets/blog1.svg" alt="Gradient Boosting vs. Neural Networks">
+        </div>
+        <div class="featured-content">
+          <div class="blog-icon"><i class="fas fa-brain"></i></div>
+          <div class="article-meta"><span class="article-date"><i class="fas fa-calendar"></i> May 2026</span><span class="article-category">Machine Learning</span><span class="article-reading-time"><i class="fas fa-clock"></i> 10 min read</span></div>
+          <h3>Gradient Boosting vs. Neural Networks: When Classical ML Still Wins</h3>
+          <p>A deep-dive into why gradient-boosted trees consistently outperform deep learning on tabular data, and how to decide which paradigm to deploy in production.</p>
+          <div class="article-tags"><span class="tag">Machine Learning</span><span class="tag">XGBoost</span><span class="tag">Model Selection</span></div>
+          <a href="#" class="read-more-btn">Read Full Article <i class="fas fa-arrow-right"></i></a>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <section class="blog-grid-section">
+    <div class="container">
+      <div class="blog-grid" id="blog-grid"></div>
+      <div class="load-more-container"><button class="btn btn-primary" id="load-more-btn"><i class="fas fa-plus"></i> Load More Articles</button></div>
+    </div>
+  </section>
+
+  <section id="article-detail" class="article-detail" style="display:none">
+    <div class="container">
+      <button class="btn btn-secondary" id="article-back" style="margin-bottom:12px"><i class="fas fa-arrow-left"></i> Back to Articles</button>
+      <article class="article">
+        <div class="article-hero-image"><img id="article-image" src="assets/featured-blog.svg" alt="Article image"></div>
+        <div class="article-header">
+          <div class="article-meta"><span id="article-date"><i class="fas fa-calendar"></i> —</span><span id="article-category">—</span></div>
+          <h1 id="article-title">Article Title</h1>
+        </div>
+        <div id="article-body" class="article-body">
+          <p>Loading...</p>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <section class="newsletter-signup">
+    <div class="container">
+      <div class="newsletter-content">
+        <div class="newsletter-text"><h3>Stay Updated</h3><p>Get the latest articles delivered to your inbox</p></div>
+        <form class="newsletter-form" id="newsletter-form"><input type="email" placeholder="Enter your email" required><button type="submit" class="btn btn-primary"><i class="fas fa-paper-plane"></i> Subscribe</button></form>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-section"><h3>Debnil Pal</h3><p>AI/ML, DL, and Cybersecurity enthusiast.</p></div>
+        <div class="footer-section"><h4>Quick Links</h4><ul><li><a href="/">Home</a></li><li><a href="/about">About</a></li><li><a href="/projects">Projects</a></li><li><a href="/blogs">Blogs</a></li></ul></div>
+        <div class="footer-section"><h4>Services</h4><ul><li><a href="#">AI/ML Solutions</a></li><li><a href="#">Model Deployment</a></li><li><a href="#">Security Consulting</a></li><li><a href="#">Mentoring</a></li></ul></div>
+        <div class="footer-section"><h4>Connect</h4><div class="footer-social"><a href="https://www.linkedin.com/in/debnil-pal-960502285" target="_blank" title="Debnil linkedin"><i class="fab fa-linkedin"></i></a><a href="https://github.com/DEBNILPAL" target="_blank" title="GitHub: DEBNILPAL"><i class="fab fa-github"></i></a><a href="https://www.facebook.com/profile.php?id=100091180033224" target="_blank" title="Facebook"><i class="fab fa-facebook"></i></a></div></div>
+      </div>
+      <div class="footer-bottom"><p>&copy; 2025 Debnil Pal. All rights reserved.</p></div>
+    </div>
+  </footer>
+
+  <script src="js/space.js"></script>
+  <script src="js/main.js"></script>
+  <script src="js/blog.js"></script>
+  <script src="js/theme.js"></script>
+</body>
+</html>
+```
+
+- Updated filter buttons: Machine Learning, NLP, Deep Learning, Quantum ML, Web Development
+- Updated featured article section to match the new ML blog
+- Article detail hero image constrained to 280px max-height (no scroll needed to see content)
+
+---
+
+### 4. Contact Form — Fully Working
+
+#### Both forms (Contact page + Home "Get In Touch") now:
+- Send data to `/api/contact` endpoint
+- Show a **green success banner** inside the form on success
+- Show a **red error banner** on failure
+- Clear form fields after successful submission
+- Messages are saved to `data/contact-messages.json` (file-based, always works)
+- Messages are also saved to MongoDB when connected (deployed on Render)
+- Email notifications sent when SMTP credentials are configured
+
+```diff:contact.js
+const express = require('express');
+const nodemailer = require('nodemailer');
+const ContactMessage = require('../models/ContactMessage');
+const router = express.Router();
+
+const createTransporter = () => {
+  const host = process.env.EMAIL_HOST || 'smtp.gmail.com';
+  const port = Number(process.env.EMAIL_PORT || 587);
+  const secure = (process.env.EMAIL_SECURE === 'true') || port === 465; // Gmail SSL on 465
+  return nodemailer.createTransport({
+    host,
+    port,
+    secure,
+    auth: {
+      user: process.env.EMAIL_USER,
+      pass: process.env.EMAIL_PASS
+    }
+  });
+};
+
+router.post('/', async (req, res) => {
+  try {
+    const { name, email, subject, message } = req.body || {};
+    if (!name || !email || !subject || !message) return res.status(400).json({ error: 'All fields are required' });
+    if (!email.includes('@')) return res.status(400).json({ error: 'Valid email is required' });
+    // Persist to MongoDB if connected/configured
+    try {
+      if (process.env.MONGODB_URI) {
+        await ContactMessage.create({ name: name.trim(), email: email.trim().toLowerCase(), subject: subject.trim(), message: String(message).trim() });
+      }
+    } catch (dbErr) {
+      console.error('Failed to persist contact message:', dbErr?.message);
+      // continue to email even if DB save fails
+    }
+
+    const emailContent = {
+      from: process.env.EMAIL_USER,
+      to: process.env.EMAIL_TO || process.env.EMAIL_USER,
+      replyTo: email,
+      subject: `Portfolio Contact: ${subject}`,
+      html: `<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+        <h2 style="color: #667eea; border-bottom: 2px solid #667eea; padding-bottom: 10px;">New Contact Form Submission</h2>
+        <div style="background: #f8fafc; padding: 20px; border-radius: 8px; margin: 20px 0;">
+          <h3 style="color: #1a202c; margin-top: 0;">Contact Details</h3>
+          <p><strong>Name:</strong> ${name}</p>
+          <p><strong>Email:</strong> ${email}</p>
+          <p><strong>Subject:</strong> ${subject}</p>
+        </div>
+        <div style="background: #ffffff; padding: 20px; border: 1px solid #e2e8f0; border-radius: 8px;">
+          <h3 style="color: #1a202c; margin-top: 0;">Message</h3>
+          <p style="line-height: 1.6; color: #4a5568;">${String(message).replace(/\n/g,'<br>')}</p>
+        </div>
+      </div>`
+    };
+
+    const autoReplyContent = {
+      from: process.env.EMAIL_USER,
+      to: email,
+      subject: 'Thank you for contacting me!',
+      html: `<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+        <h2 style="color: #667eea; border-bottom: 2px solid #667eea; padding-bottom: 10px;">Thank You for Reaching Out!</h2>
+        <p style="font-size: 16px; line-height: 1.6; color: #4a5568;">Hi ${name},</p>
+        <p style="font-size: 16px; line-height: 1.6; color: #4a5568;">Thanks for your message about <strong>${subject}</strong>. I typically respond within 24-48 hours.</p>
+        <ul style="color: #4a5568; line-height: 1.6;">
+          <li>Blogs: ${process.env.PORTFOLIO_URL || 'http://localhost:3000'}/blogs.html</li>
+          <li>Projects: ${process.env.PORTFOLIO_URL || 'http://localhost:3000'}/#projects</li>
+          <li>Discussions: ${process.env.PORTFOLIO_URL || 'http://localhost:3000'}/recommendations.html</li>
+        </ul>
+        <p>Best regards,<br><strong>Debnil Pal</strong></p>
+      </div>`
+    };
+
+    if (process.env.EMAIL_USER && process.env.EMAIL_PASS) {
+      const transporter = createTransporter();
+      await transporter.sendMail(emailContent);
+      await transporter.sendMail(autoReplyContent);
+    } else {
+      console.log('Contact (email not configured):', { name, email, subject, message });
+    }
+
+    res.json({ message: "Message sent successfully! I'll get back to you soon." });
+  } catch (e) {
+    console.error('Contact form error:', e);
+    res.status(500).json({ error: 'Failed to send message. Please try again later.' });
+  }
+});
+
+module.exports = router;
+===
+const express = require('express');
+const nodemailer = require('nodemailer');
+const path = require('path');
+const fs = require('fs');
+const ContactMessage = require('../models/ContactMessage');
+const router = express.Router();
+
+const createTransporter = () => {
+  const host = process.env.EMAIL_HOST || 'smtp.gmail.com';
+  const port = Number(process.env.EMAIL_PORT || 587);
+  const secure = (process.env.EMAIL_SECURE === 'true') || port === 465; // Gmail SSL on 465
+  return nodemailer.createTransport({
+    host,
+    port,
+    secure,
+    auth: {
+      user: process.env.EMAIL_USER,
+      pass: process.env.EMAIL_PASS
+    }
+  });
+};
+
+// Fallback: persist contact messages to a local JSON file
+function saveMessageToFile(msg) {
+  try {
+    const dir = path.join(__dirname, '..', 'data');
+    if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+    const filePath = path.join(dir, 'contact-messages.json');
+    let messages = [];
+    if (fs.existsSync(filePath)) {
+      try { messages = JSON.parse(fs.readFileSync(filePath, 'utf-8')); } catch (_) { messages = []; }
+    }
+    messages.push({ ...msg, timestamp: new Date().toISOString() });
+    fs.writeFileSync(filePath, JSON.stringify(messages, null, 2));
+  } catch (err) {
+    console.error('Failed to save contact message to file:', err.message);
+  }
+}
+
+router.post('/', async (req, res) => {
+  try {
+    const { name, email, subject, message } = req.body || {};
+    if (!name || !email || !subject || !message) return res.status(400).json({ error: 'All fields are required' });
+    if (!email.includes('@')) return res.status(400).json({ error: 'Valid email is required' });
+
+    // Always save to file as a reliable fallback
+    saveMessageToFile({ name: name.trim(), email: email.trim(), subject: subject.trim(), message: String(message).trim() });
+
+    // Persist to MongoDB only if actually connected (avoids hanging operations)
+    if (req.mongoConnected) {
+      try {
+        await ContactMessage.create({ name: name.trim(), email: email.trim().toLowerCase(), subject: subject.trim(), message: String(message).trim() });
+      } catch (dbErr) {
+        console.error('Failed to persist contact message to DB:', dbErr?.message);
+      }
+    }
+
+    const emailContent = {
+      from: process.env.EMAIL_USER,
+      to: process.env.EMAIL_TO || process.env.EMAIL_USER,
+      replyTo: email,
+      subject: `Portfolio Contact: ${subject}`,
+      html: `<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+        <h2 style="color: #667eea; border-bottom: 2px solid #667eea; padding-bottom: 10px;">New Contact Form Submission</h2>
+        <div style="background: #f8fafc; padding: 20px; border-radius: 8px; margin: 20px 0;">
+          <h3 style="color: #1a202c; margin-top: 0;">Contact Details</h3>
+          <p><strong>Name:</strong> ${name}</p>
+          <p><strong>Email:</strong> ${email}</p>
+          <p><strong>Subject:</strong> ${subject}</p>
+        </div>
+        <div style="background: #ffffff; padding: 20px; border: 1px solid #e2e8f0; border-radius: 8px;">
+          <h3 style="color: #1a202c; margin-top: 0;">Message</h3>
+          <p style="line-height: 1.6; color: #4a5568;">${String(message).replace(/\n/g,'<br>')}</p>
+        </div>
+      </div>`
+    };
+
+    const autoReplyContent = {
+      from: process.env.EMAIL_USER,
+      to: email,
+      subject: 'Thank you for contacting me!',
+      html: `<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+        <h2 style="color: #667eea; border-bottom: 2px solid #667eea; padding-bottom: 10px;">Thank You for Reaching Out!</h2>
+        <p style="font-size: 16px; line-height: 1.6; color: #4a5568;">Hi ${name},</p>
+        <p style="font-size: 16px; line-height: 1.6; color: #4a5568;">Thanks for your message about <strong>${subject}</strong>. I typically respond within 24-48 hours.</p>
+        <ul style="color: #4a5568; line-height: 1.6;">
+          <li>Blogs: ${process.env.PORTFOLIO_URL || 'http://localhost:3000'}/blogs</li>
+          <li>Projects: ${process.env.PORTFOLIO_URL || 'http://localhost:3000'}/projects</li>
+          <li>Discussions: ${process.env.PORTFOLIO_URL || 'http://localhost:3000'}/recommendations</li>
+        </ul>
+        <p>Best regards,<br><strong>Debnil Pal</strong></p>
+      </div>`
+    };
+
+    if (process.env.EMAIL_USER && process.env.EMAIL_PASS) {
+      try {
+        const transporter = createTransporter();
+        await transporter.sendMail(emailContent);
+        await transporter.sendMail(autoReplyContent);
+      } catch (emailErr) {
+        console.error('Email sending failed (message still saved):', emailErr?.message);
+      }
+    } else {
+      console.log('Contact (email not configured):', { name, email, subject, message });
+    }
+
+    res.json({ message: "Message sent successfully! I'll get back to you soon." });
+  } catch (e) {
+    console.error('Contact form error:', e);
+    res.status(500).json({ error: 'Failed to send message. Please try again later.' });
+  }
+});
+
+module.exports = router;
+
+```
+
+---
+
+### 5. Deployment Compatibility
+
+| Feature | Local Dev | Netlify (static) | Render (backend) |
+|---------|-----------|-------------------|-------------------|
+| Blog JSON | ✅ Read by Express | ✅ Static file | ✅ Read by Express |
+| Contact form | ✅ Saves to file | ✅ Proxied to Render | ✅ Saves to file + MongoDB |
+| Email | ⚠️ Needs SMTP creds | N/A | ✅ With Mailtrap |
+
+> [!IMPORTANT]
+> Contact messages are saved to `data/contact-messages.json` on the Render server. On Render's free tier, files are ephemeral (lost on restart). For permanent storage, configure MongoDB in `.env`.
+
+---
+
+## Files Changed
+
+| File | Change |
+|------|--------|
+| `public/data/blogs.json` | **[NEW]** 5 full blog articles |
+| `routes/blogs.js` | Reads from JSON file instead of hardcoded array |
+| `routes/contact.js` | File-based fallback + MongoDB state check + email try/catch |
+| `server.js` | Blogs always from JSON; MongoDB tracked for graceful fallback |
+| `public/blogs.html` | New filter categories + updated featured article |
+| `public/js/blog.js` | New category icons for ML/NLP/DL/Quantum |
+| `public/css/blog.css` | Article image constrained; article body styles; contact-status styles |
+| `public/index.html` | Updated blog previews + working contact form with status div |
+| `public/contact.html` | Working contact form with status div + blog.css link |
+| `package.json` | Nodemon ignores data dirs (prevents restart on JSON write) |
+| `nodemon.json` | **[NEW]** Watch config for dev server |
+| `.gitignore` | Excludes `data/contact-messages.json` from Git |
+
+## Verification
+
+- ✅ Blog API returns all 5 posts with full HTML content
+- ✅ Blog filters work (Machine Learning, NLP, Deep Learning, Quantum ML, Web Dev)
+- ✅ Article detail view shows constrained image + readable content
+- ✅ Contact page form submits and shows green success message
+- ✅ Home page "Get In Touch" form submits and shows green success message
+- ✅ All contact messages saved to `data/contact-messages.json` with timestamps

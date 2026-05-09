@@ -6,7 +6,14 @@ function categoryIcon(category='', title=''){
   // Title-based hints first
   if(t.includes('css grid')||t.includes('grid')||t.includes('flexbox')) return 'fas fa-th-large';
   if(t.includes('responsive')) return 'fas fa-mobile-alt';
-  if(c.includes('ai')||c.includes('ml')) return 'fas fa-robot';
+  if(t.includes('quantum')) return 'fas fa-atom';
+  if(t.includes('tokeniz')||t.includes('nlp')||t.includes('language model')) return 'fas fa-language';
+  if(t.includes('residual')||t.includes('deep learning')||t.includes('neural net')) return 'fas fa-network-wired';
+  if(c==='machine-learning'||c.includes('ml')) return 'fas fa-brain';
+  if(c==='nlp') return 'fas fa-language';
+  if(c==='deep-learning') return 'fas fa-network-wired';
+  if(c==='quantum-ml') return 'fas fa-atom';
+  if(c.includes('ai')) return 'fas fa-robot';
   if(c.includes('security')||c.includes('cyber')) return 'fas fa-shield-alt';
   if(c.includes('react')) return 'fab fa-react';
   if(c.includes('node')) return 'fab fa-node-js';

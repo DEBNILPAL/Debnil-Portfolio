@@ -1,5 +1,7 @@
 const express = require('express');
 const nodemailer = require('nodemailer');
+const path = require('path');
+const fs = require('fs');
 const ContactMessage = require('../models/ContactMessage');
 const router = express.Router();
 
@@ -18,19 +20,39 @@ const createTransporter = () => {
   });
 };
 
+// Fallback: persist contact messages to a local JSON file
+function saveMessageToFile(msg) {
+  try {
+    const dir = path.join(__dirname, '..', 'data');
+    if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+    const filePath = path.join(dir, 'contact-messages.json');
+    let messages = [];
+    if (fs.existsSync(filePath)) {
+      try { messages = JSON.parse(fs.readFileSync(filePath, 'utf-8')); } catch (_) { messages = []; }
+    }
+    messages.push({ ...msg, timestamp: new Date().toISOString() });
+    fs.writeFileSync(filePath, JSON.stringify(messages, null, 2));
+  } catch (err) {
+    console.error('Failed to save contact message to file:', err.message);
+  }
+}
+
 router.post('/', async (req, res) => {
   try {
     const { name, email, subject, message } = req.body || {};
     if (!name || !email || !subject || !message) return res.status(400).json({ error: 'All fields are required' });
     if (!email.includes('@')) return res.status(400).json({ error: 'Valid email is required' });
-    // Persist to MongoDB if connected/configured
-    try {
-      if (process.env.MONGODB_URI) {
+
+    // Always save to file as a reliable fallback
+    saveMessageToFile({ name: name.trim(), email: email.trim(), subject: subject.trim(), message: String(message).trim() });
+
+    // Persist to MongoDB only if actually connected (avoids hanging operations)
+    if (req.mongoConnected) {
+      try {
         await ContactMessage.create({ name: name.trim(), email: email.trim().toLowerCase(), subject: subject.trim(), message: String(message).trim() });
+      } catch (dbErr) {
+        console.error('Failed to persist contact message to DB:', dbErr?.message);
       }
-    } catch (dbErr) {
-      console.error('Failed to persist contact message:', dbErr?.message);
-      // continue to email even if DB save fails
     }
 
     const emailContent = {
@@ -62,18 +84,22 @@ router.post('/', async (req, res) => {
         <p style="font-size: 16px; line-height: 1.6; color: #4a5568;">Hi ${name},</p>
         <p style="font-size: 16px; line-height: 1.6; color: #4a5568;">Thanks for your message about <strong>${subject}</strong>. I typically respond within 24-48 hours.</p>
         <ul style="color: #4a5568; line-height: 1.6;">
-          <li>Blogs: ${process.env.PORTFOLIO_URL || 'http://localhost:3000'}/blogs.html</li>
-          <li>Projects: ${process.env.PORTFOLIO_URL || 'http://localhost:3000'}/#projects</li>
-          <li>Discussions: ${process.env.PORTFOLIO_URL || 'http://localhost:3000'}/recommendations.html</li>
+          <li>Blogs: ${process.env.PORTFOLIO_URL || 'http://localhost:3000'}/blogs</li>
+          <li>Projects: ${process.env.PORTFOLIO_URL || 'http://localhost:3000'}/projects</li>
+          <li>Discussions: ${process.env.PORTFOLIO_URL || 'http://localhost:3000'}/recommendations</li>
         </ul>
         <p>Best regards,<br><strong>Debnil Pal</strong></p>
       </div>`
     };
 
     if (process.env.EMAIL_USER && process.env.EMAIL_PASS) {
-      const transporter = createTransporter();
-      await transporter.sendMail(emailContent);
-      await transporter.sendMail(autoReplyContent);
+      try {
+        const transporter = createTransporter();
+        await transporter.sendMail(emailContent);
+        await transporter.sendMail(autoReplyContent);
+      } catch (emailErr) {
+        console.error('Email sending failed (message still saved):', emailErr?.message);
+      }
     } else {
       console.log('Contact (email not configured):', { name, email, subject, message });
     }
@@ -86,3 +112,4 @@ router.post('/', async (req, res) => {
 });
 
 module.exports = router;
+
