@@ -1,7 +1,7 @@
 # Netlify configuration for a static site in /public
 [build]
   publish = "public"
-  command = ""
+  command = "rm -rf .netlify/plugins && echo 'Static site ready'"
 
 # Force pretty URLs: /about -> /about.html, etc.
 [[redirects]]
