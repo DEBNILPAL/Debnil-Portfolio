@@ -1,7 +1,12 @@
 # Netlify configuration for a static site in /public
 [build]
   publish = "public"
-  command = "rm -rf .netlify/plugins && echo 'Static site ready'"
+  command = "echo 'Static site ready'"
+
+# Disable the Neon extension for this site (not needed — backend runs on Render)
+[[integrations]]
+  name = "neon"
+  enabled = false
 
 # Force pretty URLs: /about -> /about.html, etc.
 [[redirects]]
